@@ -20,14 +20,9 @@ export const metadata: Metadata = {
   title: 'Bontex Bondeados | Telas bondeadas y servicio de bondeado textil',
   description:
     'Desarrollamos y producimos soluciones textiles con tecnología de bondeado. Telas bondeadas, servicio de bondeado a medida, ventas mayoristas y envíos a todo el país.',
-  generator: 'v0.app',
   icons: {
-    icon: [
-      { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
-      { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/icon.png',
+    apple: '/icon.png',
   },
 }
 
