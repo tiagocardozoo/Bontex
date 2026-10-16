@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     'Desarrollamos y producimos soluciones textiles con tecnología de bondeado. Telas bondeadas, servicio de bondeado a medida, ventas mayoristas y envíos a todo el país.',
   icons: {
     icon: '/icon.png',
+    shortcut: '/icon.png',
     apple: '/icon.png',
   },
 }
