@@ -56,7 +56,7 @@ export function Hero() {
           <div className="relative">
             <FeatureCard
               href="#servicio"
-              image="/images/servicio-bondeado.png"
+              image="/images/Máquina industrial laminando tela gris.png"
               imageAlt="Maquinaria de bondeado textil con rodillos industriales"
               titleTop="Servicio de"
               titleBottom="bondeado"
