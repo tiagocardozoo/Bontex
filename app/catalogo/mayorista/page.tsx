@@ -120,10 +120,13 @@ export default function CatalogoMayorista() {
       })
       .join('\n\n')
 
-    const mensaje =
-      '¡Hola! Vine desde la página de Bontex ' +
-      'y quiero realizar este pedido mayorista:\n\n' +
-      detalle +
+   
+const mensaje =
+  '¡Hola! Vine desde la página de Bontex ' +
+  'y quiero realizar este pedido:\n\n' +
+  '*🏭 PEDIDO MAYORISTA*\n\n' +
+  detalle +
+
       '\n\nTotal de metros: ' + totalMetros +
       '\n\nQuisiera coordinar el espesor y consultar ' +
       'los precios y la disponibilidad de las telas.\n' +
