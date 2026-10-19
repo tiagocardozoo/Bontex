@@ -122,11 +122,12 @@ export default function CatalogoMinorista() {
         )
       })
       .join('\n\n')
+const mensaje =
+  '¡Hola! Vine desde la página de Bontex ' +
+  'y quiero realizar este pedido:\n\n' +
+  '*🛒 PEDIDO MINORISTA*\n\n' +
+  detalle +
 
-    const mensaje =
-      '¡Hola! Vine desde la página de Bontex ' +
-      'y quiero realizar este pedido:\n\n' +
-      detalle +
       '\n\nTotal de metros: ' + totalMetros +
       '\nTotal del pedido: ' + formatoPrecio(totalPrecio) +
       '\n\n¿Me confirman la disponibilidad de ' +
