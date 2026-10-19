@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { href: '/', label: 'Inicio' },
   { href: '/catalogo', label: 'Catálogo de telas' },
   { href: '/servicio', label: 'Servicio de bondeado' },
-  { href: '/#mayoristas', label: 'Nosotros' },
+  { href: '/nosotros', label: 'Nosotros' },
   { href: '/#contacto', label: 'Contacto' },
 ]
 
