@@ -473,9 +473,24 @@ export default function CatalogoMinorista() {
                         </strong>
                       </div>
                     </div>
+                 
                   ))}
+
+                  <button
+                    type="button"
+                    onClick={() => setCarritoAbierto(false)}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#1e4d5c]/40 bg-[#f3f8f9] px-5 py-4 font-semibold text-[#1e4d5c] transition hover:bg-[#e2eff1]"
+                  >
+                    <Plus size={20} />
+                    Agregar más productos
+                  </button>
+
+                  <p className="text-center text-xs text-slate-500">
+                    Tu pedido se conserva mientras seguís comprando.
+                  </p>
                 </div>
               )}
+
             </div>
 
             {/* TOTAL Y PEDIDO */}
@@ -509,13 +524,6 @@ export default function CatalogoMinorista() {
                 Realizar pedido por WhatsApp
               </button>
 
-              <button
-                type="button"
-                onClick={() => setCarritoAbierto(false)}
-                className="mt-3 w-full py-2 text-sm font-medium text-[#1e4d5c] hover:underline"
-              >
-                Seguir comprando
-              </button>
             </div>
           </aside>
         </div>
