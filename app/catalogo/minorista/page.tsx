@@ -125,7 +125,7 @@ export default function CatalogoMinorista() {
 const mensaje =
   '¡Hola! Vine desde la página de Bontex ' +
   'y quiero realizar este pedido:\n\n' +
-  '*🛒 PEDIDO MINORISTA*\n\n' +
+  '* PEDIDO MINORISTA*\n\n' +
   detalle +
 
       '\n\nTotal de metros: ' + totalMetros +
