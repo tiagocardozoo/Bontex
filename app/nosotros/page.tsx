@@ -100,6 +100,32 @@ export default function NosotrosPage() {
         </div>
       </section>
 
+{/* EMPRESAS QUE TRABAJAN CON NOSOTROS */}
+<section className="border-t border-white/15 px-5 py-16 md:px-8 md:py-20">
+  <div className="mx-auto max-w-7xl">
+
+    <h2 className="mb-10 text-center font-serif text-3xl text-white md:text-4xl">
+      Algunas empresas que trabajan con nosotros
+    </h2>
+
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+
+      {/* ESPACIOS PARA LOS FUTUROS LOGOS */}
+      {[1, 2, 3, 4, 5].map((numero) => (
+        <div
+          key={numero}
+          className="flex aspect-[4/3] items-center justify-center rounded-xl border border-[#8ed0db]/25 bg-white/10 p-5"
+        >
+          <span className="text-center text-xs text-white/40">
+            Logo empresa {numero}
+          </span>
+        </div>
+      ))}
+
+    </div>
+  </div>
+</section>
+
       {/* NUESTRA TRAYECTORIA */}
       <section className="border-y border-white/15 bg-white/5">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 text-center md:grid-cols-3 md:px-8 md:py-16">
