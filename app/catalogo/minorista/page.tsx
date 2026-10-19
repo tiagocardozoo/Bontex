@@ -293,7 +293,7 @@ export default function CatalogoMinorista() {
                       min="0"
                       step="1"
                       placeholder="0"
-                      value={cantidad}
+                      value={cantidad === '0' ? '' : cantidad}
                       onChange={(e) => {
                         setCantidades((actual) => ({
                           ...actual,
