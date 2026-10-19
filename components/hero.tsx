@@ -18,7 +18,7 @@ export function Hero() {
         className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0f2630]/85 via-[#163a46]/75 to-[#0f2630]/90"
       />
 
-      <div className="mx-auto max-w-7xl px-5 pb-32 pt-16 md:px-8 md:pb-40 md:pt-24">
+      <div className="mx-auto max-w-7xl px-5 pb-12 pt-16 md:px-8 md:pb-16 md:pt-24">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-16">
           <div className="lg:col-span-7">
             <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-teal-soft md:text-xs">
