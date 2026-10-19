@@ -12,8 +12,8 @@ import {
   MessageCircle,
 } from 'lucide-react'
 
-// EDITAR AQUÍ LOS PRODUCTOS Y SUS PRECIOS
-// Los precios actuales son de prueba.
+// PRODUCTOS Y PRECIOS
+// Los precios son de prueba y se pueden modificar acá.
 
 const productos = [
   {
@@ -45,14 +45,15 @@ const productos = [
   },
 ]
 
-// Número de WhatsApp de Bontex
-const WHATSAPP = '5491135399183'
+// WHATSAPP PARA RECIBIR LOS PEDIDOS
+const WHATSAPP = '5491132043169'
 
 const formatoPrecio = (numero: number) =>
   '$' + numero.toLocaleString('es-AR')
 
 export default function CatalogoMinorista() {
-  const [cantidades, setCantidades] = useState<Record<string, number>>({})
+  // Permite escribir, borrar y dejar vacío el campo de metros
+  const [cantidades, setCantidades] = useState<Record<string, string>>({})
   const [seleccion, setSeleccion] = useState<Record<string, number>>({})
 
   const productosElegidos = productos.filter(
@@ -71,11 +72,25 @@ export default function CatalogoMinorista() {
   )
 
   function agregarProducto(id: string) {
-    const cantidad = cantidades[id] || 1
+    const cantidad = Number(cantidades[id] ?? '0')
+
+    if (
+      !Number.isFinite(cantidad) ||
+      !Number.isInteger(cantidad) ||
+      cantidad <= 0
+    ) {
+      return
+    }
 
     setSeleccion((actual) => ({
       ...actual,
       [id]: (actual[id] || 0) + cantidad,
+    }))
+
+    // Reiniciar el casillero a cero
+    setCantidades((actual) => ({
+      ...actual,
+      [id]: '0',
     }))
   }
 
@@ -104,7 +119,7 @@ export default function CatalogoMinorista() {
         return (
           `• ${metros} metros de ${producto.nombre} ` +
           `${producto.espesor}, color ${producto.color}\n` +
-          `  ${formatoPrecio(producto.precio)} por metro\n` +
+          `  Precio por metro: ${formatoPrecio(producto.precio)}\n` +
           `  Subtotal: ${formatoPrecio(subtotal)}`
         )
       })
@@ -227,23 +242,38 @@ export default function CatalogoMinorista() {
                 </div>
 
                 <div className="mt-6 flex items-center justify-between gap-3">
-                  <label className="text-sm font-medium text-[#102b36]">
+                  <label
+                    htmlFor={`metros-${producto.id}`}
+                    className="text-sm font-medium text-[#102b36]"
+                  >
                     Metros
                   </label>
 
                   <input
+                    id={`metros-${producto.id}`}
                     type="number"
-                    min="1"
+                    min="0"
                     step="1"
-                    value={cantidades[producto.id] || 1}
+                    placeholder="0"
+                    value={cantidades[producto.id] ?? '0'}
                     onChange={(e) => {
-                      const numero = Number(e.target.value)
+                      const valor = e.target.value
+
+                      if (valor === '') {
+                        setCantidades((actual) => ({
+                          ...actual,
+                          [producto.id]: '',
+                        }))
+                        return
+                      }
+
+                      const numero = Number(valor)
+
+                      if (!Number.isFinite(numero)) return
+
                       setCantidades((actual) => ({
                         ...actual,
-                        [producto.id]: Math.max(
-                          1,
-                          Math.floor(numero || 1)
-                        ),
+                        [producto.id]: valor,
                       }))
                     }}
                     className="w-24 rounded-lg border border-slate-300 px-3 py-2 text-center text-[#102b36]"
@@ -253,7 +283,13 @@ export default function CatalogoMinorista() {
                 <button
                   type="button"
                   onClick={() => agregarProducto(producto.id)}
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#1e4d5c] px-5 py-3.5 font-semibold text-white transition hover:bg-[#286b7d]"
+                  disabled={
+                    !Number.isInteger(
+                      Number(cantidades[producto.id] ?? '0')
+                    ) ||
+                    Number(cantidades[producto.id] ?? '0') <= 0
+                  }
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#1e4d5c] px-5 py-3.5 font-semibold text-white transition hover:bg-[#286b7d] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <ShoppingCart size={19} />
                   Agregar al carrito
