@@ -101,7 +101,7 @@ export default function NosotrosPage() {
       </section>
 
 {/* EMPRESAS QUE TRABAJAN CON NOSOTROS */}
-<section className="border-t border-white/15 px-5 py-16 md:px-8 md:py-20">
+<section className="px-5 pb-12 pt-0 md:px-8 md:pb-16 md:pt-0">
   <div className="mx-auto max-w-7xl">
 
     <h2 className="mb-10 text-center font-serif text-3xl text-white md:text-4xl">
