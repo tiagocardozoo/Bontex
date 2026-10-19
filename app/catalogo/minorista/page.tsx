@@ -219,21 +219,11 @@ export default function CatalogoMinorista() {
             </button>
           </div>
         </div>
-
-        {/* AVISO TEMPORAL */}
-        <p className="mt-6 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          Catálogo en preparación: los precios publicados
-          son de prueba y todavía no representan los
-          valores comerciales definitivos.
-        </p>
+        
       </section>
 
       {/* PRODUCTOS */}
       <section className="mx-auto max-w-7xl px-5 py-12">
-
-        <h2 className="mb-8 font-serif text-3xl text-[#102b36]">
-          Nuestras telas
-        </h2>
 
         <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
           {productos.map((producto) => {
