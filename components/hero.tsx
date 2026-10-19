@@ -55,7 +55,7 @@ export function Hero() {
           />
           <div className="relative">
             <FeatureCard
-              href="#servicio"
+             href="/servicio"
               image="/images/maquina-bontex.png"
               imageAlt="Maquinaria de bondeado textil con rodillos industriales"
               titleTop="Servicio de"
