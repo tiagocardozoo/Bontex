@@ -1,6 +1,8 @@
+
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Cormorant_Garamond, Manrope } from 'next/font/google'
+import { SiteHeader } from '@/components/site-header'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -38,10 +40,22 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${cormorant.variable} ${manrope.variable} bg-background`}>
+    <html
+      lang="es"
+      className={`${cormorant.variable} ${manrope.variable} bg-background`}
+    >
       <body className="antialiased">
-        {children}
+
+        {/* MENÚ GLOBAL PARA TODAS LAS PÁGINAS */}
+        <SiteHeader />
+
+        {/* OCULTA LOS ENCABEZADOS ANTIGUOS DE LAS SUBPÁGINAS */}
+        <div className="[&>main>header]:hidden">
+          {children}
+        </div>
+
         {process.env.NODE_ENV === 'production' && <Analytics />}
+
       </body>
     </html>
   )
