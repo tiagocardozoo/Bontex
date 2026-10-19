@@ -69,7 +69,7 @@ export function ProductosCarrusel() {
         !pausadoRef.current &&
         !reducirMovimiento.matches
       ) {
-        ventana.scrollLeft += (delta * 45) / 1000
+        ventana.scrollLeft += (delta * 110) / 1000
       }
 
       if (ancho > 0) {
