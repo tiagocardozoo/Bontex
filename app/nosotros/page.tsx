@@ -16,7 +16,7 @@ export default function NosotrosPage() {
       />
 
       {/* NUESTRA HISTORIA */}
-      <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-16 md:px-8 md:py-24 lg:grid-cols-2 lg:gap-16">
+      <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-6 pt-16 md:px-8 md:pb-8 md:pt-24 lg:grid-cols-2 lg:gap-16">
 
         {/* TEXTO IZQUIERDO */}
         <div>
