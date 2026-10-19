@@ -45,7 +45,7 @@ export function Hero() {
 
         <div className="relative mt-14 grid gap-6 md:mt-20 md:grid-cols-2 lg:gap-8">
           <FeatureCard
-            href="#productos"
+            href="/catalogo"
             image="/images/telas-bondeadas.jpeg"
             imageAlt="Rollos de telas bondeadas en tonos gris, azul petróleo y negro"
             titleTop="Telas"
