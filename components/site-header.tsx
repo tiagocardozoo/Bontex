@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 const NAV_ITEMS = [
   { href: '/', label: 'Inicio' },
   { href: '/catalogo', label: 'Catalogo de telas' },
-  { href: '/#servicio', label: 'Servicio de bondeado' },
+  { href: '/servicio', label: 'Servicio de bondeado' },
   { href: '/#mayoristas', label: 'Nosotros' },
   { href: '/#contacto', label: 'Contacto' },
 ]
