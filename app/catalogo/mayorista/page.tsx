@@ -124,7 +124,7 @@ export default function CatalogoMayorista() {
 const mensaje =
   '¡Hola! Vine desde la página de Bontex ' +
   'y quiero realizar este pedido:\n\n' +
-  '*🏭 PEDIDO MAYORISTA*\n\n' +
+  '* PEDIDO MAYORISTA*\n\n' +
   detalle +
 
       '\n\nTotal de metros: ' + totalMetros +
