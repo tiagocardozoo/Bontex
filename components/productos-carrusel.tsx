@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const productos = [
@@ -38,51 +38,47 @@ const productos = [
 ]
 
 export function ProductosCarrusel() {
-  const carruselRef = useRef<HTMLDivElement>(null)
+  const ventanaRef = useRef<HTMLDivElement>(null)
   const grupoRef = useRef<HTMLDivElement>(null)
   const pausadoRef = useRef(false)
-  const [pausado, setPausado] = useState(false)
 
   useEffect(() => {
-    const carrusel = carruselRef.current
+    const ventana = ventanaRef.current
     const grupo = grupoRef.current
-    if (!carrusel || !grupo) return
+    if (!ventana || !grupo) return
 
-    const anchoGrupo = () => grupo.getBoundingClientRect().width
-
-    carrusel.scrollLeft = anchoGrupo()
-
-    const movimientoReducido = window.matchMedia(
+    const reducirMovimiento = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     )
 
+    ventana.scrollLeft = grupo.offsetWidth
+
     let frame = 0
-    let anterior = 0
+    let tiempoAnterior = 0
 
     function animar(tiempo: number) {
-      if (anterior === 0) anterior = tiempo
+      if (!ventana || !grupo) return
 
-      const delta = Math.min(tiempo - anterior, 50)
-      anterior = tiempo
+      if (!tiempoAnterior) tiempoAnterior = tiempo
+      const delta = Math.min(tiempo - tiempoAnterior, 50)
+      tiempoAnterior = tiempo
+
+      const ancho = grupo.offsetWidth
 
       if (
-        carrusel &&
         !pausadoRef.current &&
-        !movimientoReducido.matches
+        !reducirMovimiento.matches
       ) {
-        // Velocidad: 38 píxeles por segundo
-        carrusel.scrollLeft += (delta * 38) / 1000
+        ventana.scrollLeft += (delta * 45) / 1000
       }
 
-      const ancho = anchoGrupo()
-
       if (ancho > 0) {
-        if (carrusel.scrollLeft >= ancho * 2) {
-          carrusel.scrollLeft -= ancho
+        if (ventana.scrollLeft >= ancho * 2) {
+          ventana.scrollLeft -= ancho
         }
 
-        if (carrusel.scrollLeft <= 0) {
-          carrusel.scrollLeft += ancho
+        if (ventana.scrollLeft < ancho * 0.5) {
+          ventana.scrollLeft += ancho
         }
       }
 
@@ -94,77 +90,69 @@ export function ProductosCarrusel() {
     return () => cancelAnimationFrame(frame)
   }, [])
 
-  function pausar(valor: boolean) {
-    pausadoRef.current = valor
-    setPausado(valor)
-  }
-
   function mover(direccion: number) {
-    const carrusel = carruselRef.current
-    const tarjeta = carrusel?.querySelector<HTMLElement>(
+    const ventana = ventanaRef.current
+    const tarjeta = ventana?.querySelector<HTMLElement>(
       '.producto-tarjeta'
     )
 
-    if (!carrusel || !tarjeta) return
+    if (!ventana || !tarjeta) return
 
     const ancho = tarjeta.getBoundingClientRect().width + 16
-
-    carrusel.scrollBy({
-      left: direccion * ancho,
-      behavior: 'smooth',
-    })
+    ventana.scrollLeft += direccion * ancho
   }
 
   return (
     <section
       id="aplicaciones"
-      className="relative bg-[#f3f5f5] pb-20 md:pb-24"
+      className="relative bg-[#f3f5f5] py-16 md:py-20"
     >
-      {/* Carrusel situado sobre el fondo azul del hero */}
-      <div className="relative z-10 -mt-48 md:-mt-56">
-        <div className="mx-auto mb-4 flex max-w-7xl justify-end gap-2 px-5 md:px-8">
-          <button
-            type="button"
-            onClick={() => mover(-1)}
-            aria-label="Ver productos anteriores"
-            className="flex size-11 items-center justify-center rounded-full border border-white/50 bg-[#174554] text-white transition hover:bg-[#28667a]"
-          >
-            <ChevronLeft size={23} />
-          </button>
+      {/* TITULO ARRIBA DEL CARRUSEL */}
+      <div className="mx-auto mb-10 max-w-7xl px-5 md:px-8">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#397587]">
+          APLICACIONES TEXTILES
+        </p>
 
-          <button
-            type="button"
-            onClick={() => mover(1)}
-            aria-label="Ver productos siguientes"
-            className="flex size-11 items-center justify-center rounded-full border border-white/50 bg-[#174554] text-white transition hover:bg-[#28667a]"
-          >
-            <ChevronRight size={23} />
-          </button>
-        </div>
+        <h2 className="mt-4 font-serif text-4xl leading-tight text-[#102b36] md:text-5xl">
+          Productos elaborados con nuestras telas
+        </h2>
+
+        <p className="mt-4 text-base leading-relaxed text-slate-600">
+          Descubrí las distintas aplicaciones de los materiales textiles bondeados.
+        </p>
+      </div>
+
+      {/* CARRUSEL CON FLECHAS A LOS COSTADOS */}
+      <div className="relative w-full">
 
         <div
-          ref={carruselRef}
+          ref={ventanaRef}
           className="productos-ventana"
-          onMouseEnter={() => pausar(true)}
-          onMouseLeave={() => pausar(false)}
-          onTouchStart={() => pausar(true)}
-          onTouchEnd={() => pausar(false)}
-          onFocusCapture={() => pausar(true)}
-          onBlurCapture={() => pausar(false)}
-          aria-label="Carrusel de aplicaciones textiles"
+          onMouseEnter={() => {
+            pausadoRef.current = true
+          }}
+          onMouseLeave={() => {
+            pausadoRef.current = false
+          }}
+          onTouchStart={() => {
+            pausadoRef.current = true
+          }}
+          onTouchEnd={() => {
+            pausadoRef.current = false
+          }}
         >
           <div className="productos-pista">
             {[0, 1, 2].map((repeticion) => (
               <div
+                key={repeticion}
                 ref={repeticion === 0 ? grupoRef : undefined}
                 className="productos-grupo"
-                key={repeticion}
                 aria-hidden={repeticion !== 1}
               >
                 {productos.map((producto) => (
                   <article
                     key={producto.nombre}
-                    className="producto-tarjeta overflow-hidden rounded-xl bg-white shadow-lg"
+                    className="producto-tarjeta overflow-hidden rounded-xl bg-white shadow-md"
                   >
                     <div className="aspect-[4/3] overflow-hidden bg-slate-200">
                       <img
@@ -179,6 +167,7 @@ export function ProductosCarrusel() {
                       <h3 className="text-sm font-bold text-[#102b36]">
                         {producto.nombre}
                       </h3>
+
                       <p className="mt-2 text-xs leading-relaxed text-slate-600">
                         {producto.material}
                       </p>
@@ -189,23 +178,42 @@ export function ProductosCarrusel() {
             ))}
           </div>
         </div>
+
+        {/* FLECHA IZQUIERDA */}
+        <button
+          type="button"
+          aria-label="Producto anterior"
+          onClick={() => mover(-1)}
+          onMouseEnter={() => {
+            pausadoRef.current = true
+          }}
+          onMouseLeave={() => {
+            pausadoRef.current = false
+          }}
+          className="absolute left-2 top-[30%] z-20 flex size-11 items-center justify-center rounded-full border border-white/50 bg-[#174554]/90 text-white shadow-lg transition hover:bg-[#28667a] md:left-4"
+        >
+          <ChevronLeft size={25} />
+        </button>
+
+        {/* FLECHA DERECHA */}
+        <button
+          type="button"
+          aria-label="Producto siguiente"
+          onClick={() => mover(1)}
+          onMouseEnter={() => {
+            pausadoRef.current = true
+          }}
+          onMouseLeave={() => {
+            pausadoRef.current = false
+          }}
+          className="absolute right-2 top-[30%] z-20 flex size-11 items-center justify-center rounded-full border border-white/50 bg-[#174554]/90 text-white shadow-lg transition hover:bg-[#28667a] md:right-4"
+        >
+          <ChevronRight size={25} />
+        </button>
       </div>
 
-      {/* Título y descripción debajo del carrusel */}
-      <div className="mx-auto mt-14 max-w-7xl px-5 md:mt-16 md:px-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#397587]">
-          APLICACIONES TEXTILES
-        </p>
-
-        <h2 className="mt-4 font-serif text-4xl text-[#102b36] md:text-5xl">
-          Productos elaborados con nuestras telas
-        </h2>
-
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
-          Descubrí las distintas aplicaciones de los materiales textiles bondeados.
-        </p>
-
-        <p className="mt-5 text-xs text-slate-500">
+      <div className="mx-auto mt-5 max-w-7xl px-5 md:px-8">
+        <p className="text-xs text-slate-500">
           Imágenes ilustrativas de posibles aplicaciones textiles.
         </p>
       </div>
@@ -217,6 +225,7 @@ export function ProductosCarrusel() {
           scrollbar-width: none;
           -ms-overflow-style: none;
           overscroll-behavior-x: contain;
+          padding: 4px 24px 20px;
         }
 
         .productos-ventana::-webkit-scrollbar {
@@ -237,19 +246,18 @@ export function ProductosCarrusel() {
 
         .producto-tarjeta {
           flex: 0 0 auto;
-          width: calc((100vw - 96px) / 5);
-          max-width: 300px;
+          width: calc((100vw - 112px) / 5);
         }
 
         @media (max-width: 1023px) {
           .producto-tarjeta {
-            width: calc((100vw - 64px) / 3);
+            width: calc((100vw - 80px) / 3);
           }
         }
 
         @media (max-width: 639px) {
           .producto-tarjeta {
-            width: 68vw;
+            width: 72vw;
           }
         }
       `}</style>
