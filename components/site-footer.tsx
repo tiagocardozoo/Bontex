@@ -15,7 +15,7 @@ export function SiteFooter() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-teal-soft">Contacto</p>
             <h2 id="contacto-title" className="mt-4 font-serif text-4xl font-medium text-balance md:text-5xl">
-              Nuestro horario de atención.
+              Nuestro horario de atención:
             </h2>
             <p className="mt-5 text-2xl font-medium text-white/90 md:text-3xl">
   Lunes a viernes de 9:00 a 15:00 hs.
