@@ -69,14 +69,7 @@ export default function CatalogoPage() {
               className="group relative flex min-h-[350px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-[#8ed0db]/40 bg-[#174453]/90 px-7 py-12 text-center shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#8ed0db] hover:bg-[#1d5363] md:min-h-[390px]"
             >
 
-              {/* ÍCONO */}
-              <div className="mb-8 flex size-16 items-center justify-center rounded-full border border-[#8ed0db]/40 bg-white/10 text-[#8ed0db]">
-                {catalogo.tipo === 'minorista' ? (
-                  <ShoppingBag size={31} />
-                ) : (
-                  <Boxes size={31} />
-                )}
-              </div>
+        
 
               {/* TÍTULO */}
               <h2 className="max-w-md font-sans text-2xl font-bold uppercase leading-tight tracking-[0.045em] text-white md:text-3xl">
