@@ -15,8 +15,11 @@ export function SiteFooter() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-teal-soft">Contacto</p>
             <h2 id="contacto-title" className="mt-4 font-serif text-4xl font-medium text-balance md:text-5xl">
-              Estamos para asesorarte.
+              Nuestro horario de atención.
             </h2>
+            <p className="mt-5 text-lg text-white/75">
+  Lunes a viernes de 9:00 a 15:00 hs.
+</p>
           </div>
           <ul className="grid gap-6 sm:grid-cols-3 lg:grid-cols-1">
             {CONTACT.map(({ icon: Icon, label, value, href }) => (
