@@ -17,7 +17,7 @@ export function SiteFooter() {
             <h2 id="contacto-title" className="mt-4 font-serif text-4xl font-medium text-balance md:text-5xl">
               Nuestro horario de atención.
             </h2>
-            <p className="mt-5 text-lg text-white/75">
+            <p className="mt-5 text-2xl font-medium text-white/90 md:text-3xl">
   Lunes a viernes de 9:00 a 15:00 hs.
 </p>
           </div>
