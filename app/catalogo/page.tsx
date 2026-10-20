@@ -1,12 +1,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import {
-  ArrowRight,
-  ShoppingBag,
-  Boxes,
-} from 'lucide-react'
-
+import { ArrowRight } from 'lucide-react'
 const catalogos = [
   {
     titulo: 'CATÁLOGO MINORISTA',
