@@ -267,10 +267,15 @@ export function ProductosCarrusel() {
         }
 
         @media (hover: hover) and (pointer: fine) {
+          .productos-ventana {
+            padding-top: 32px;
+            padding-bottom: 38px;
+          }
+
           .producto-tarjeta:hover {
-            transform: scale(1.045);
+            transform: scale(1.22);
             z-index: 10;
-            box-shadow: 0 12px 25px rgba(10, 38, 48, 0.2);
+            box-shadow: 0 18px 35px rgba(10, 38, 48, 0.25);
           }
         }
 
