@@ -33,11 +33,13 @@ export function PreguntasFrecuentes() {
   return (
     <section
       id="preguntas-frecuentes"
-      className="bg-[#102b36] px-5 py-16 text-white md:px-8 md:py-20"
+      className="bg-white px-5 py-16 text-[#102b36] md:px-8 md:py-20"
     >
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-10 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#8ed0db]">
+      <div className="mx-auto max-w-7xl">
+
+        {/* TÍTULO ALINEADO A LA IZQUIERDA */}
+        <div className="mb-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#39798a]">
             TE AYUDAMOS
           </p>
 
@@ -45,37 +47,42 @@ export function PreguntasFrecuentes() {
             Preguntas frecuentes
           </h2>
 
-          <p className="mt-4 text-base text-white/65">
+          <p className="mt-4 text-base text-slate-500">
             Todo lo que necesitás saber sobre nuestros
             productos y servicios.
           </p>
         </div>
 
-        <div className="space-y-3">
+        {/* PREGUNTAS SEPARADAS POR LÍNEAS */}
+        <div className="border-t border-[#102b36]/20">
           {preguntas.map((item, index) => (
             <details
               key={index}
-              className="group rounded-xl border border-[#8ed0db]/25 bg-white/5 transition-colors open:bg-white/10"
+              className="group border-b border-[#102b36]/20"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-5 text-left font-semibold marker:hidden [&::-webkit-details-marker]:hidden md:px-7">
-                <span className="text-base md:text-lg">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-left marker:hidden [&::-webkit-details-marker]:hidden md:py-7">
+
+                <span className="text-base font-semibold text-[#102b36] md:text-lg">
                   {item.pregunta}
                 </span>
 
                 <ChevronDown
-                  size={21}
-                  className="shrink-0 text-[#8ed0db] transition-transform duration-300 group-open:rotate-180"
+                  size={23}
+                  className="shrink-0 text-[#39798a] transition-transform duration-300 group-open:rotate-180"
                 />
               </summary>
 
-              <div className="border-t border-white/10 px-5 pb-6 pt-5 md:px-7">
-                <p className="max-w-3xl leading-relaxed text-white/75">
+              {/* RESPUESTA DESPLEGABLE */}
+              <div className="pb-7 pr-10">
+                <p className="max-w-4xl text-base leading-relaxed text-slate-600">
                   {item.respuesta}
                 </p>
               </div>
+
             </details>
           ))}
         </div>
+
       </div>
     </section>
   )
