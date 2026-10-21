@@ -1,7 +1,6 @@
-
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft,
@@ -11,40 +10,103 @@ import {
   Trash2,
   MessageCircle,
   X,
+  ChevronDown,
 } from 'lucide-react'
 
-// PRODUCTOS DEL CATÁLOGO MINORISTA
-// Modificá acá nombres, fotografías y precios.
-// Los precios actuales son de prueba.
+type Variante = {
+  id: string
+  espesor: string
+  color: string
+  precio: number
+  imagen: string
+  muestra: string
+}
 
-const productos = [
+type Producto = {
+  id: string
+  nombre: string
+  categoria: string
+  descripcion: string
+  variantes: Variante[]
+}
+
+const productos: Producto[] = [
   {
-    id: 'jersey-amarillo',
+    id: 'jersey-bondeado',
     nombre: 'Jersey bondeado',
-    espesor: '3 mm',
-    color: 'Amarillo',
-    precio: 5000,
-    imagen: '/images/telas-bondeadas.jpeg',
-    muestra: '#F4CB28',
+    categoria: 'Jersey',
+    descripcion: 'Tela bondeada ideal para múltiples aplicaciones.',
+    variantes: [
+      {
+        id: 'jersey-2-5-amarillo',
+        espesor: '2,5 mm',
+        color: 'Amarillo',
+        precio: 5000,
+        imagen:
+          'https://dummyimage.com/900x700/F4CB28/102B36&text=Jersey+Amarillo',
+        muestra: '#F4CB28',
+      },
+      {
+        id: 'jersey-2-5-negro',
+        espesor: '2,5 mm',
+        color: 'Negro',
+        precio: 5000,
+        imagen:
+          'https://dummyimage.com/900x700/222222/FFFFFF&text=Jersey+Negro',
+        muestra: '#222222',
+      },
+      {
+        id: 'jersey-2-5-blanco',
+        espesor: '2,5 mm',
+        color: 'Blanco',
+        precio: 5000,
+        imagen:
+          'https://dummyimage.com/900x700/F5F5F5/102B36&text=Jersey+Blanco',
+        muestra: '#F5F5F5',
+      },
+    ],
   },
   {
-    id: 'jersey-negro',
-    nombre: 'Jersey bondeado',
-    espesor: '3 mm',
-    color: 'Negro',
-    precio: 5000,
-    imagen: '/images/telas-bondeadas.jpeg',
-    muestra: '#222222',
+    id: 'simil-neopreno',
+    nombre: 'Símil neopreno',
+    categoria: 'Símil neopreno',
+    descripcion: 'Estructura firme y excelente presencia visual.',
+    variantes: [
+      {
+        id: 'simil-neopreno-2-5-negro',
+        espesor: '2,5 mm',
+        color: 'Negro',
+        precio: 5800,
+        imagen:
+          'https://dummyimage.com/900x700/1F1F1F/FFFFFF&text=Simil+Neopreno+Negro',
+        muestra: '#1F1F1F',
+      },
+    ],
   },
   {
-    id: 'jersey-blanco',
-    nombre: 'Jersey bondeado',
-    espesor: '3 mm',
-    color: 'Blanco',
-    precio: 5000,
-    imagen: '/images/telas-bondeadas.jpeg',
-    muestra: '#F5F5F5',
+    id: 'velour-bondeado',
+    nombre: 'Velour bondeado',
+    categoria: 'Velour',
+    descripcion: 'Textura suave y aspecto elegante.',
+    variantes: [
+      {
+        id: 'velour-2-5-negro',
+        espesor: '2,5 mm',
+        color: 'Negro',
+        precio: 6200,
+        imagen:
+          'https://dummyimage.com/900x700/2B2B2B/FFFFFF&text=Velour+Negro',
+        muestra: '#2B2B2B',
+      },
+    ],
   },
+]
+
+const filtros = [
+  'Todas las telas',
+  'Jersey',
+  'Símil neopreno',
+  'Velour',
 ]
 
 const WHATSAPP = '5491132043169'
@@ -52,96 +114,187 @@ const WHATSAPP = '5491132043169'
 const formatoPrecio = (valor: number) =>
   '$' + valor.toLocaleString('es-AR')
 
+function crearClave(productoId: string, varianteId: string) {
+  return `${productoId}__${varianteId}`
+}
+
 export default function CatalogoMinorista() {
+  const [filtroActivo, setFiltroActivo] = useState('Todas las telas')
   const [cantidades, setCantidades] = useState<Record<string, string>>({})
   const [carrito, setCarrito] = useState<Record<string, number>>({})
   const [carritoAbierto, setCarritoAbierto] = useState(false)
-
-  const productosElegidos = productos.filter(
-    (producto) => (carrito[producto.id] || 0) > 0
+  const [productoAbierto, setProductoAbierto] = useState<string | null>(
+    'jersey-bondeado'
+  )
+  const [selecciones, setSelecciones] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      productos.map((producto) => [producto.id, producto.variantes[0].id])
+    )
   )
 
-  const cantidadProductos = productosElegidos.length
+  const mapaVariantes = useMemo(() => {
+    const mapa: Record<
+      string,
+      {
+        producto: Producto
+        variante: Variante
+      }
+    > = {}
 
-  const totalMetros = productosElegidos.reduce(
-    (total, producto) => total + carrito[producto.id],
+    productos.forEach((producto) => {
+      producto.variantes.forEach((variante) => {
+        mapa[crearClave(producto.id, variante.id)] = {
+          producto,
+          variante,
+        }
+      })
+    })
+
+    return mapa
+  }, [])
+
+  const productosFiltrados =
+    filtroActivo === 'Todas las telas'
+      ? productos
+      : productos.filter((producto) => producto.categoria === filtroActivo)
+
+  const itemsCarrito = Object.entries(carrito)
+    .filter(([, metros]) => metros > 0)
+    .map(([clave, metros]) => ({
+      clave,
+      metros,
+      ...mapaVariantes[clave],
+    }))
+
+  const cantidadProductos = itemsCarrito.length
+
+  const totalMetros = itemsCarrito.reduce(
+    (total, item) => total + item.metros,
     0
   )
 
-  const totalPrecio = productosElegidos.reduce(
-    (total, producto) =>
-      total + producto.precio * carrito[producto.id],
+  const totalPrecio = itemsCarrito.reduce(
+    (total, item) => total + item.variante.precio * item.metros,
     0
   )
 
-  function agregarProducto(id: string) {
-    const cantidad = Number(cantidades[id] ?? '0')
+  function seleccionarEspesor(producto: Producto, espesor: string) {
+    const varianteActual = producto.variantes.find(
+      (variante) => variante.id === selecciones[producto.id]
+    )
+
+    const colorActual = varianteActual?.color
+
+    const nuevaVariante =
+      producto.variantes.find(
+        (variante) =>
+          variante.espesor === espesor &&
+          variante.color === colorActual
+      ) ||
+      producto.variantes.find(
+        (variante) => variante.espesor === espesor
+      )
+
+    if (!nuevaVariante) return
+
+    setSelecciones((actual) => ({
+      ...actual,
+      [producto.id]: nuevaVariante.id,
+    }))
+  }
+
+  function seleccionarColor(producto: Producto, color: string) {
+    const varianteActual = producto.variantes.find(
+      (variante) => variante.id === selecciones[producto.id]
+    )
+
+    const espesorActual = varianteActual?.espesor
+
+    const nuevaVariante =
+      producto.variantes.find(
+        (variante) =>
+          variante.color === color &&
+          variante.espesor === espesorActual
+      ) ||
+      producto.variantes.find(
+        (variante) => variante.color === color
+      )
+
+    if (!nuevaVariante) return
+
+    setSelecciones((actual) => ({
+      ...actual,
+      [producto.id]: nuevaVariante.id,
+    }))
+  }
+
+  function agregarProducto(producto: Producto) {
+    const varianteId = selecciones[producto.id]
+    const clave = crearClave(producto.id, varianteId)
+    const cantidad = Number(cantidades[clave] ?? '0')
 
     if (!Number.isInteger(cantidad) || cantidad <= 0) return
 
     setCarrito((actual) => ({
       ...actual,
-      [id]: (actual[id] || 0) + cantidad,
+      [clave]: (actual[clave] || 0) + cantidad,
     }))
 
     setCantidades((actual) => ({
       ...actual,
-      [id]: '0',
+      [clave]: '0',
     }))
 
     setCarritoAbierto(true)
   }
 
-  function modificarMetros(id: string, cambio: number) {
+  function modificarMetros(clave: string, cambio: number) {
     setCarrito((actual) => ({
       ...actual,
-      [id]: Math.max(0, (actual[id] || 0) + cambio),
+      [clave]: Math.max(0, (actual[clave] || 0) + cambio),
     }))
   }
 
-  function eliminarProducto(id: string) {
+  function eliminarProducto(clave: string) {
     setCarrito((actual) => ({
       ...actual,
-      [id]: 0,
+      [clave]: 0,
     }))
   }
 
   function realizarPedido() {
-    if (productosElegidos.length === 0) return
+    if (itemsCarrito.length === 0) return
 
-    const detalle = productosElegidos
-      .map((producto) => {
-        const metros = carrito[producto.id]
-        const subtotal = producto.precio * metros
+    const detalle = itemsCarrito
+      .map((item) => {
+        const subtotal = item.variante.precio * item.metros
 
         return (
-          `• ${metros} metros de ${producto.nombre} ` +
-          `${producto.espesor}, color ${producto.color}\n` +
-          `  Precio por metro: ${formatoPrecio(producto.precio)}\n` +
+          `• ${item.metros} metros de ${item.producto.nombre}\n` +
+          `  Espesor: ${item.variante.espesor}\n` +
+          `  Color: ${item.variante.color}\n` +
+          `  Precio por metro: ${formatoPrecio(item.variante.precio)}\n` +
           `  Subtotal: ${formatoPrecio(subtotal)}`
         )
       })
       .join('\n\n')
-const mensaje =
-  '¡Hola! Vine desde la página de Bontex ' +
-  'y quiero realizar este pedido:\n\n' +
-  '* PEDIDO MINORISTA*\n\n' +
-  detalle +
 
-      '\n\nTotal de metros: ' + totalMetros +
-      '\nTotal del pedido: ' + formatoPrecio(totalPrecio) +
-      '\n\n¿Me confirman la disponibilidad de ' +
-      'las telas seleccionadas?\n¡Gracias!'
+    const mensaje =
+      '¡Hola! Vine desde la página de Bontex y quiero realizar este pedido:\n\n' +
+      '*PEDIDO MINORISTA*\n\n' +
+      detalle +
+      '\n\nTotal de metros: ' +
+      totalMetros +
+      '\nTotal del pedido: ' +
+      formatoPrecio(totalPrecio) +
+      '\n\n¿Me confirman la disponibilidad de las telas seleccionadas?\n¡Gracias!'
 
-    const url =
-      `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`
-
+    const url = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 
   return (
     <main className="min-h-screen bg-[#f3f5f5]">
-
       {/* ENCABEZADO */}
       <header className="bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-6">
@@ -180,9 +333,8 @@ const mensaje =
         </p>
       </section>
 
-      {/* RESUMEN DEL CARRITO ARRIBA */}
+      {/* RESUMEN DEL CARRITO */}
       <section className="mx-auto max-w-7xl px-5 pt-10">
-
         <div className="flex flex-wrap items-center justify-between gap-5 rounded-2xl bg-[#1e4d5c] px-6 py-6 text-white shadow-lg md:px-8">
           <div className="flex items-center gap-4">
             <div className="rounded-xl bg-white/10 p-3">
@@ -220,21 +372,71 @@ const mensaje =
             </button>
           </div>
         </div>
-        
+      </section>
+
+      {/* FILTROS */}
+      <section className="mx-auto max-w-7xl px-5 pt-8">
+        <div className="flex flex-wrap items-center gap-3">
+          {filtros.map((filtro) => {
+            const activo = filtroActivo === filtro
+
+            return (
+              <button
+                key={filtro}
+                type="button"
+                onClick={() => setFiltroActivo(filtro)}
+                className={
+                  activo
+                    ? 'rounded-full bg-[#1e4d5c] px-5 py-2.5 text-sm font-semibold text-white'
+                    : 'rounded-full border border-[#1e4d5c]/20 bg-white px-5 py-2.5 text-sm font-semibold text-[#1e4d5c] transition hover:border-[#1e4d5c]/40 hover:bg-[#edf4f5]'
+                }
+              >
+                {filtro}
+              </button>
+            )
+          })}
+        </div>
       </section>
 
       {/* PRODUCTOS */}
-      <section className="mx-auto max-w-7xl px-5 py-12">
-
+      <section className="mx-auto max-w-7xl px-5 py-10">
         <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
-          {productos.map((producto) => {
-            const cantidad = cantidades[producto.id] ?? '0'
+          {productosFiltrados.map((producto) => {
+            const varianteSeleccionada =
+              producto.variantes.find(
+                (variante) => variante.id === selecciones[producto.id]
+              ) || producto.variantes[0]
+
+            const claveSeleccionada = crearClave(
+              producto.id,
+              varianteSeleccionada.id
+            )
+
+            const cantidad = cantidades[claveSeleccionada] ?? '0'
             const numero = Number(cantidad)
 
             const cantidadValida =
               cantidad !== '' &&
               Number.isInteger(numero) &&
               numero > 0
+
+            const espesoresUnicos = Array.from(
+              new Set(
+                producto.variantes.map(
+                  (variante) => variante.espesor
+                )
+              )
+            )
+
+            const coloresUnicos = Array.from(
+              new Set(
+                producto.variantes.map(
+                  (variante) => variante.color
+                )
+              )
+            )
+
+            const abierto = productoAbierto === producto.id
 
             return (
               <article
@@ -243,31 +445,33 @@ const mensaje =
               >
                 <div className="relative h-60 overflow-hidden bg-slate-200">
                   <img
-                    src={producto.imagen}
-                    alt={`${producto.nombre} ${producto.color}`}
+                    src={varianteSeleccionada.imagen}
+                    alt={`${producto.nombre} ${varianteSeleccionada.color}`}
                     className="h-full w-full object-cover"
                   />
 
                   <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-md">
                     <span
                       className="size-5 rounded-full border border-slate-300"
-                      style={{ backgroundColor: producto.muestra }}
+                      style={{ backgroundColor: varianteSeleccionada.muestra }}
                     />
                     <span className="text-xs font-semibold text-[#102b36]">
-                      {producto.color}
+                      {varianteSeleccionada.color}
                     </span>
                   </div>
                 </div>
 
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-[#102b36]">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#7b9aa4]">
+                    {producto.categoria}
+                  </p>
+
+                  <h3 className="mt-2 text-xl font-bold text-[#102b36]">
                     {producto.nombre}
                   </h3>
 
                   <p className="mt-2 text-sm text-slate-500">
-                    Espesor: {producto.espesor}
-                    {' · '}
-                    Color: {producto.color}
+                    {producto.descripcion}
                   </p>
 
                   <div className="mt-5 border-t border-slate-100 pt-5">
@@ -276,44 +480,140 @@ const mensaje =
                     </p>
 
                     <p className="mt-1 text-2xl font-bold text-[#1e4d5c]">
-                      {formatoPrecio(producto.precio)}
+                      {formatoPrecio(varianteSeleccionada.precio)}
                     </p>
-                  </div>
-
-                  <div className="mt-6 flex items-center justify-between gap-3">
-                    <label
-                      htmlFor={`metros-${producto.id}`}
-                      className="text-sm font-medium text-[#102b36]"
-                    >
-                      Metros
-                    </label>
-
-                    <input
-                      id={`metros-${producto.id}`}
-                      type="number"
-                      min="0"
-                      step="1"
-                      placeholder="0"
-                      value={cantidad === '0' ? '' : cantidad}
-                      onChange={(e) => {
-                        setCantidades((actual) => ({
-                          ...actual,
-                          [producto.id]: e.target.value,
-                        }))
-                      }}
-                      className="w-24 rounded-lg border border-slate-300 px-3 py-2 text-center text-[#102b36]"
-                    />
                   </div>
 
                   <button
                     type="button"
-                    disabled={!cantidadValida}
-                    onClick={() => agregarProducto(producto.id)}
-                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#1e4d5c] px-5 py-3.5 font-semibold text-white transition hover:bg-[#286b7d] disabled:cursor-not-allowed disabled:opacity-50"
+                    onClick={() =>
+                      setProductoAbierto((actual) =>
+                        actual === producto.id ? null : producto.id
+                      )
+                    }
+                    className="mt-6 flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left font-semibold text-[#102b36] transition hover:bg-[#f6fbfc]"
                   >
-                    <Plus size={18} />
-                    Agregar al carrito
+                    <span>Elegir espesor y color</span>
+
+                    <ChevronDown
+                      size={20}
+                      className={`transition-transform duration-300 ${
+                        abierto ? 'rotate-180' : ''
+                      }`}
+                    />
                   </button>
+
+                  {abierto && (
+                    <div className="mt-5 border-t border-slate-100 pt-5">
+                      <div>
+                        <p className="text-sm font-semibold text-[#102b36]">
+                          Espesor
+                        </p>
+
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {espesoresUnicos.map((espesor) => {
+                            const activo =
+                              varianteSeleccionada.espesor === espesor
+
+                            return (
+                              <button
+                                key={espesor}
+                                type="button"
+                                onClick={() =>
+                                  seleccionarEspesor(producto, espesor)
+                                }
+                                className={
+                                  activo
+                                    ? 'rounded-full bg-[#1e4d5c] px-4 py-2 text-sm font-semibold text-white'
+                                    : 'rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-[#102b36] transition hover:border-[#1e4d5c]'
+                                }
+                              >
+                                {espesor}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="mt-5">
+                        <p className="text-sm font-semibold text-[#102b36]">
+                          Color
+                        </p>
+
+                        <div className="mt-3 flex flex-wrap gap-3">
+                          {coloresUnicos.map((color) => {
+                            const varianteColor =
+                              producto.variantes.find(
+                                (variante) => variante.color === color
+                              ) || producto.variantes[0]
+
+                            const activo =
+                              varianteSeleccionada.color === color
+
+                            return (
+                              <button
+                                key={color}
+                                type="button"
+                                onClick={() =>
+                                  seleccionarColor(producto, color)
+                                }
+                                className={
+                                  activo
+                                    ? 'flex items-center gap-2 rounded-full border-2 border-[#1e4d5c] bg-[#eef6f7] px-3 py-2'
+                                    : 'flex items-center gap-2 rounded-full border border-slate-300 px-3 py-2 transition hover:border-[#1e4d5c]'
+                                }
+                              >
+                                <span
+                                  className="size-5 rounded-full border border-slate-300"
+                                  style={{
+                                    backgroundColor: varianteColor.muestra,
+                                  }}
+                                />
+                                <span className="text-sm font-medium text-[#102b36]">
+                                  {color}
+                                </span>
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="mt-6 flex items-center justify-between gap-3">
+                        <label
+                          htmlFor={`metros-${claveSeleccionada}`}
+                          className="text-sm font-medium text-[#102b36]"
+                        >
+                          Metros
+                        </label>
+
+                        <input
+                          id={`metros-${claveSeleccionada}`}
+                          type="number"
+                          min="0"
+                          step="1"
+                          placeholder="0"
+                          value={cantidad === '0' ? '' : cantidad}
+                          onChange={(e) => {
+                            setCantidades((actual) => ({
+                              ...actual,
+                              [claveSeleccionada]: e.target.value,
+                            }))
+                          }}
+                          className="w-24 rounded-lg border border-slate-300 px-3 py-2 text-center text-[#102b36]"
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        disabled={!cantidadValida}
+                        onClick={() => agregarProducto(producto)}
+                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#1e4d5c] px-5 py-3.5 font-semibold text-white transition hover:bg-[#286b7d] disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <Plus size={18} />
+                        Agregar al carrito
+                      </button>
+                    </div>
+                  )}
                 </div>
               </article>
             )
@@ -354,8 +654,6 @@ const mensaje =
       {/* PANEL LATERAL DEL CARRITO */}
       {carritoAbierto && (
         <div className="fixed inset-0 z-50">
-
-          {/* FONDO OSCURO */}
           <button
             type="button"
             aria-label="Cerrar carrito"
@@ -363,15 +661,12 @@ const mensaje =
             className="absolute inset-0 bg-black/60"
           />
 
-          {/* PANEL */}
           <aside
             role="dialog"
             aria-modal="true"
             aria-label="Tu carrito de compras"
             className="absolute bottom-0 right-0 top-0 flex w-full max-w-md flex-col bg-white shadow-2xl"
           >
-
-            {/* CABECERA */}
             <div className="flex items-center justify-between bg-[#102b36] px-6 py-5 text-white">
               <div className="flex items-center gap-3">
                 <ShoppingCart size={25} />
@@ -396,10 +691,8 @@ const mensaje =
               </button>
             </div>
 
-            {/* CONTENIDO DEL CARRITO */}
             <div className="flex-1 overflow-y-auto px-5 py-6">
-
-              {productosElegidos.length === 0 ? (
+              {itemsCarrito.length === 0 ? (
                 <div className="py-16 text-center text-slate-500">
                   <ShoppingCart
                     size={46}
@@ -412,30 +705,30 @@ const mensaje =
                 </div>
               ) : (
                 <div className="space-y-5">
-                  {productosElegidos.map((producto) => (
+                  {itemsCarrito.map((item) => (
                     <div
-                      key={producto.id}
+                      key={item.clave}
                       className="rounded-xl border border-slate-200 p-4"
                     >
                       <div className="flex justify-between gap-3">
                         <div>
                           <h3 className="font-bold text-[#102b36]">
-                            {producto.nombre}
+                            {item.producto.nombre}
                           </h3>
 
                           <p className="mt-1 text-sm text-slate-500">
-                            {producto.espesor} · {producto.color}
+                            {item.variante.espesor} · {item.variante.color}
                           </p>
 
                           <p className="mt-1 text-sm text-slate-500">
-                            {formatoPrecio(producto.precio)} / metro
+                            {formatoPrecio(item.variante.precio)} / metro
                           </p>
                         </div>
 
                         <button
                           type="button"
-                          onClick={() => eliminarProducto(producto.id)}
-                          aria-label={`Eliminar ${producto.color}`}
+                          onClick={() => eliminarProducto(item.clave)}
+                          aria-label={`Eliminar ${item.variante.color}`}
                           className="self-start text-red-500 hover:text-red-700"
                         >
                           <Trash2 size={19} />
@@ -446,7 +739,7 @@ const mensaje =
                         <div className="flex items-center gap-3">
                           <button
                             type="button"
-                            onClick={() => modificarMetros(producto.id, -1)}
+                            onClick={() => modificarMetros(item.clave, -1)}
                             aria-label="Restar un metro"
                             className="rounded-lg border border-slate-300 p-2"
                           >
@@ -454,12 +747,12 @@ const mensaje =
                           </button>
 
                           <span className="min-w-12 text-center font-semibold text-[#102b36]">
-                            {carrito[producto.id]} m
+                            {item.metros} m
                           </span>
 
                           <button
                             type="button"
-                            onClick={() => modificarMetros(producto.id, 1)}
+                            onClick={() => modificarMetros(item.clave, 1)}
                             aria-label="Sumar un metro"
                             className="rounded-lg border border-slate-300 p-2"
                           >
@@ -469,12 +762,11 @@ const mensaje =
 
                         <strong className="text-[#1e4d5c]">
                           {formatoPrecio(
-                            producto.precio * carrito[producto.id]
+                            item.variante.precio * item.metros
                           )}
                         </strong>
                       </div>
                     </div>
-                 
                   ))}
 
                   <button
@@ -491,10 +783,8 @@ const mensaje =
                   </p>
                 </div>
               )}
-
             </div>
 
-            {/* TOTAL Y PEDIDO */}
             <div className="border-t border-slate-200 bg-[#f3f5f5] p-6">
               <div className="flex justify-between text-sm text-slate-600">
                 <span>Total de metros</span>
@@ -524,7 +814,6 @@ const mensaje =
                 <MessageCircle size={23} />
                 Realizar pedido por WhatsApp
               </button>
-
             </div>
           </aside>
         </div>
