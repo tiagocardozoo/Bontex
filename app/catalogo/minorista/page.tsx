@@ -10,7 +10,6 @@ import {
   Trash2,
   MessageCircle,
   X,
-  ChevronDown,
 } from 'lucide-react'
 
 type Variante = {
@@ -123,9 +122,7 @@ export default function CatalogoMinorista() {
   const [cantidades, setCantidades] = useState<Record<string, string>>({})
   const [carrito, setCarrito] = useState<Record<string, number>>({})
   const [carritoAbierto, setCarritoAbierto] = useState(false)
-  const [productoAbierto, setProductoAbierto] = useState<string | null>(
-    'jersey-bondeado'
-  )
+  const [productoSeleccionado, setProductoSeleccionado] = useState<string | null>(null)
   const [selecciones, setSelecciones] = useState<Record<string, string>>(() =>
     Object.fromEntries(
       productos.map((producto) => [producto.id, producto.variantes[0].id])
@@ -398,7 +395,7 @@ export default function CatalogoMinorista() {
         </div>
       </section>
 
-      {/* PRODUCTOS */}
+      {/* PRODUCTOS: UNA TARJETA POR TIPO DE TELA */}
       <section className="mx-auto max-w-7xl px-5 py-10">
         <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
           {productosFiltrados.map((producto) => {
@@ -407,41 +404,10 @@ export default function CatalogoMinorista() {
                 (variante) => variante.id === selecciones[producto.id]
               ) || producto.variantes[0]
 
-            const claveSeleccionada = crearClave(
-              producto.id,
-              varianteSeleccionada.id
-            )
-
-            const cantidad = cantidades[claveSeleccionada] ?? '0'
-            const numero = Number(cantidad)
-
-            const cantidadValida =
-              cantidad !== '' &&
-              Number.isInteger(numero) &&
-              numero > 0
-
-            const espesoresUnicos = Array.from(
-              new Set(
-                producto.variantes.map(
-                  (variante) => variante.espesor
-                )
-              )
-            )
-
-            const coloresUnicos = Array.from(
-              new Set(
-                producto.variantes.map(
-                  (variante) => variante.color
-                )
-              )
-            )
-
-            const abierto = productoAbierto === producto.id
-
             return (
               <article
                 key={producto.id}
-                className="overflow-hidden rounded-2xl bg-white shadow-md"
+                className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-md"
               >
                 <div className="relative h-60 overflow-hidden bg-slate-200">
                   <img
@@ -449,36 +415,20 @@ export default function CatalogoMinorista() {
                     alt={`${producto.nombre} ${varianteSeleccionada.color}`}
                     className="h-full w-full object-cover"
                   />
-
-                  <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-md">
-                    <span
-                      className="size-5 rounded-full border border-slate-300"
-                      style={{ backgroundColor: varianteSeleccionada.muestra }}
-                    />
-                    <span className="text-xs font-semibold text-[#102b36]">
-                      {varianteSeleccionada.color}
-                    </span>
-                  </div>
                 </div>
 
-                <div className="p-6">
+                <div className="flex flex-1 flex-col p-6">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#7b9aa4]">
                     {producto.categoria}
                   </p>
-
                   <h3 className="mt-2 text-xl font-bold text-[#102b36]">
                     {producto.nombre}
                   </h3>
-
                   <p className="mt-2 text-sm text-slate-500">
                     {producto.descripcion}
                   </p>
-
                   <div className="mt-5 border-t border-slate-100 pt-5">
-                    <p className="text-xs text-slate-500">
-                      Precio por metro
-                    </p>
-
+                    <p className="text-xs text-slate-500">Precio por metro</p>
                     <p className="mt-1 text-2xl font-bold text-[#1e4d5c]">
                       {formatoPrecio(varianteSeleccionada.precio)}
                     </p>
@@ -486,140 +436,183 @@ export default function CatalogoMinorista() {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setProductoAbierto((actual) =>
-                        actual === producto.id ? null : producto.id
-                      )
-                    }
-                    className="mt-6 flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left font-semibold text-[#102b36] transition hover:bg-[#f6fbfc]"
+                    onClick={() => setProductoSeleccionado(producto.id)}
+                    className="mt-6 flex w-full items-center justify-center rounded-lg bg-[#1e4d5c] px-5 py-3.5 font-semibold text-white transition hover:bg-[#286b7d]"
                   >
-                    <span>Elegir espesor y color</span>
-
-                    <ChevronDown
-                      size={20}
-                      className={`transition-transform duration-300 ${
-                        abierto ? 'rotate-180' : ''
-                      }`}
-                    />
+                    Comprar esta tela
                   </button>
-
-                  {abierto && (
-                    <div className="mt-5 border-t border-slate-100 pt-5">
-                      <div>
-                        <p className="text-sm font-semibold text-[#102b36]">
-                          Espesor
-                        </p>
-
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {espesoresUnicos.map((espesor) => {
-                            const activo =
-                              varianteSeleccionada.espesor === espesor
-
-                            return (
-                              <button
-                                key={espesor}
-                                type="button"
-                                onClick={() =>
-                                  seleccionarEspesor(producto, espesor)
-                                }
-                                className={
-                                  activo
-                                    ? 'rounded-full bg-[#1e4d5c] px-4 py-2 text-sm font-semibold text-white'
-                                    : 'rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-[#102b36] transition hover:border-[#1e4d5c]'
-                                }
-                              >
-                                {espesor}
-                              </button>
-                            )
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="mt-5">
-                        <p className="text-sm font-semibold text-[#102b36]">
-                          Color
-                        </p>
-
-                        <div className="mt-3 flex flex-wrap gap-3">
-                          {coloresUnicos.map((color) => {
-                            const varianteColor =
-                              producto.variantes.find(
-                                (variante) => variante.color === color
-                              ) || producto.variantes[0]
-
-                            const activo =
-                              varianteSeleccionada.color === color
-
-                            return (
-                              <button
-                                key={color}
-                                type="button"
-                                onClick={() =>
-                                  seleccionarColor(producto, color)
-                                }
-                                className={
-                                  activo
-                                    ? 'flex items-center gap-2 rounded-full border-2 border-[#1e4d5c] bg-[#eef6f7] px-3 py-2'
-                                    : 'flex items-center gap-2 rounded-full border border-slate-300 px-3 py-2 transition hover:border-[#1e4d5c]'
-                                }
-                              >
-                                <span
-                                  className="size-5 rounded-full border border-slate-300"
-                                  style={{
-                                    backgroundColor: varianteColor.muestra,
-                                  }}
-                                />
-                                <span className="text-sm font-medium text-[#102b36]">
-                                  {color}
-                                </span>
-                              </button>
-                            )
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="mt-6 flex items-center justify-between gap-3">
-                        <label
-                          htmlFor={`metros-${claveSeleccionada}`}
-                          className="text-sm font-medium text-[#102b36]"
-                        >
-                          Metros
-                        </label>
-
-                        <input
-                          id={`metros-${claveSeleccionada}`}
-                          type="number"
-                          min="0"
-                          step="1"
-                          placeholder="0"
-                          value={cantidad === '0' ? '' : cantidad}
-                          onChange={(e) => {
-                            setCantidades((actual) => ({
-                              ...actual,
-                              [claveSeleccionada]: e.target.value,
-                            }))
-                          }}
-                          className="w-24 rounded-lg border border-slate-300 px-3 py-2 text-center text-[#102b36]"
-                        />
-                      </div>
-
-                      <button
-                        type="button"
-                        disabled={!cantidadValida}
-                        onClick={() => agregarProducto(producto)}
-                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#1e4d5c] px-5 py-3.5 font-semibold text-white transition hover:bg-[#286b7d] disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        <Plus size={18} />
-                        Agregar al carrito
-                      </button>
-                    </div>
-                  )}
                 </div>
               </article>
             )
           })}
         </div>
       </section>
+
+      {/* VENTANA DE COMPRA: FOTO IZQUIERDA Y OPCIONES DERECHA */}
+      {productoSeleccionado && (() => {
+        const producto = productos.find((p) => p.id === productoSeleccionado)
+        if (!producto) return null
+
+        const varianteSeleccionada =
+          producto.variantes.find(
+            (variante) => variante.id === selecciones[producto.id]
+          ) || producto.variantes[0]
+        const claveSeleccionada = crearClave(producto.id, varianteSeleccionada.id)
+        const cantidad = cantidades[claveSeleccionada] ?? '0'
+        const numero = Number(cantidad)
+        const cantidadValida =
+          cantidad !== '' && Number.isInteger(numero) && numero > 0
+        const espesoresUnicos = Array.from(
+          new Set(producto.variantes.map((variante) => variante.espesor))
+        )
+        const coloresUnicos = Array.from(
+          new Set(producto.variantes.map((variante) => variante.color))
+        )
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
+            <button
+              type="button"
+              aria-label="Cerrar selección de tela"
+              onClick={() => setProductoSeleccionado(null)}
+              className="absolute inset-0 bg-black/70"
+            />
+
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Comprar ${producto.nombre}`}
+              className="relative z-10 grid max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-2xl bg-white shadow-2xl md:grid-cols-2"
+            >
+              <div className="relative min-h-56 bg-slate-200 sm:min-h-80 md:min-h-[530px]">
+                <img
+                  src={varianteSeleccionada.imagen}
+                  alt={`${producto.nombre}, color ${varianteSeleccionada.color}`}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
+
+              <div className="relative p-6 pt-14 sm:p-9 sm:pt-14">
+                <button
+                  type="button"
+                  onClick={() => setProductoSeleccionado(null)}
+                  aria-label="Cerrar ventana"
+                  className="absolute right-5 top-4 rounded-full border border-slate-200 p-2 text-[#102b36] transition hover:bg-slate-100"
+                >
+                  <X size={22} />
+                </button>
+
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#39798a]">
+                  {producto.categoria}
+                </p>
+                <h2 className="mt-2 font-serif text-4xl text-[#102b36]">
+                  {producto.nombre}
+                </h2>
+                <p className="mt-3 text-sm text-slate-500">{producto.descripcion}</p>
+
+                <div className="mt-7 border-t border-slate-200 pt-6">
+                  <p className="text-sm font-semibold text-[#102b36]">Espesor</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {espesoresUnicos.map((espesor) => (
+                      <button
+                        key={espesor}
+                        type="button"
+                        onClick={() => seleccionarEspesor(producto, espesor)}
+                        className={
+                          varianteSeleccionada.espesor === espesor
+                            ? 'rounded-lg bg-[#1e4d5c] px-5 py-2.5 text-sm font-semibold text-white'
+                            : 'rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-semibold text-[#102b36] hover:border-[#1e4d5c]'
+                        }
+                      >
+                        {espesor}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <p className="text-sm font-semibold text-[#102b36]">
+                    Color: <span className="font-normal">{varianteSeleccionada.color}</span>
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-4">
+                    {coloresUnicos.map((color) => {
+                      const varianteColor =
+                        producto.variantes.find((variante) => variante.color === color) ||
+                        producto.variantes[0]
+                      const activo = varianteSeleccionada.color === color
+
+                      return (
+                        <button
+                          key={color}
+                          type="button"
+                          onClick={() => seleccionarColor(producto, color)}
+                          aria-label={`Elegir color ${color}`}
+                          aria-pressed={activo}
+                          title={color}
+                          className={
+                            activo
+                              ? 'rounded-full border-2 border-[#1e4d5c] p-1.5'
+                              : 'rounded-full border-2 border-transparent p-1.5 hover:border-slate-300'
+                          }
+                        >
+                          <span
+                            className="block size-8 rounded-full border border-slate-300"
+                            style={{ backgroundColor: varianteColor.muestra }}
+                          />
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <div className="mt-7 border-t border-slate-200 pt-6">
+                  <p className="text-xs text-slate-500">Precio por metro</p>
+                  <p className="mt-1 text-3xl font-bold text-[#1e4d5c]">
+                    {formatoPrecio(varianteSeleccionada.precio)}
+                  </p>
+                </div>
+
+                <div className="mt-6 flex items-center justify-between gap-3">
+                  <label
+                    htmlFor="metros-ventana-compra"
+                    className="text-sm font-semibold text-[#102b36]"
+                  >
+                    Metros
+                  </label>
+                  <input
+                    id="metros-ventana-compra"
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="0"
+                    value={cantidad === '0' ? '' : cantidad}
+                    onChange={(e) =>
+                      setCantidades((actual) => ({
+                        ...actual,
+                        [claveSeleccionada]: e.target.value,
+                      }))
+                    }
+                    className="w-28 rounded-lg border border-slate-300 px-3 py-3 text-center text-[#102b36]"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  disabled={!cantidadValida}
+                  onClick={() => {
+                    agregarProducto(producto)
+                    setProductoSeleccionado(null)
+                  }}
+                  className="mt-7 flex w-full items-center justify-center gap-2 rounded-lg bg-[#1e4d5c] px-5 py-4 font-semibold text-white transition hover:bg-[#286b7d] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Plus size={19} />
+                  Agregar al carrito
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* BOTÓN FLOTANTE DEL CARRITO */}
       {!carritoAbierto && (
