@@ -1,5 +1,6 @@
 
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   ArrowLeft,
   ArrowRight,
@@ -8,8 +9,6 @@ import {
 } from 'lucide-react'
 
 // ESPESORES DISPONIBLES
-// Podremos agregar o quitar medidas más adelante.
-
 const espesores = [
   { medida: '2 mm' },
   { medida: '2.5 mm' },
@@ -62,21 +61,67 @@ export default function ServicioBondeadoPage() {
         </div>
       </header>
 
-      {/* TÍTULO PRINCIPAL */}
-      <section className="mx-auto max-w-7xl px-5 pb-20 pt-20 text-left md:px-8 md:pb-24 md:pt-28">
+      {/* NUEVA PORTADA: TEXTO A LA IZQUIERDA, MÁQUINA A LA DERECHA */}
+      <section className="mx-auto grid max-w-7xl gap-10 px-5 pb-20 pt-16 md:px-8 md:pb-24 md:pt-24 lg:grid-cols-2 lg:items-center lg:gap-14">
 
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#8ed0db]">
-          SERVICIO DE BONDEADO TEXTIL
-        </p>
+        {/* TEXTO IZQUIERDO */}
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#8ed0db]">
+            SERVICIO DE BONDEADO TEXTIL
+          </p>
 
-        <h1 className="mt-7 max-w-6xl font-serif text-4xl font-medium leading-[1.15] text-white md:text-6xl lg:text-7xl">
-          Vos traés tus telas, nosotros las bondeamos y les damos forma.
-        </h1>
+          <h1 className="mt-7 font-serif text-4xl font-medium leading-[1.12] text-white md:text-5xl lg:text-6xl">
+            Vos traés tus telas, nosotros las bondeamos y les damos forma.
+          </h1>
 
-        <p className="mt-10 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">
-          Ofrecemos un servicio de bondeado textil personalizado,
-          adaptado a las características y necesidades de cada cliente.
-        </p>
+          <p className="mt-8 max-w-xl text-base leading-relaxed text-white/75 md:text-lg">
+            Ofrecemos un servicio de bondeado textil personalizado,
+            adaptado a las características y necesidades de cada cliente.
+          </p>
+        </div>
+
+        {/* FOTOGRAFÍA DERECHA */}
+        <div className="flex flex-col gap-6">
+
+          <div className="relative aspect-[5/4] overflow-hidden rounded-3xl border border-[#8ed0db]/30 bg-[#1e4d5c] shadow-2xl">
+
+            <Image
+              src="/images/maquina-bontex.png"
+              alt="Máquina industrial de bondeado textil de Bontex"
+              fill
+              priority
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              className="object-cover"
+            />
+
+            {/* OSCURECIMIENTO SUAVE */}
+            <div className="absolute inset-0 bg-[#071b24]/40" />
+
+            {/* TEXTO SOBRE LA FOTOGRAFÍA */}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#071b24]/85 to-transparent p-6 md:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8ed0db]">
+                BONTEX BONDEADOS
+              </p>
+
+              <p className="mt-3 font-serif text-2xl leading-tight text-white md:text-3xl">
+                Tecnología y experiencia al servicio de tus telas.
+              </p>
+            </div>
+          </div>
+
+          {/* BOTÓN DE COTIZACIÓN */}
+          <a
+            href={enlaceWhatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-[#8ed0db] px-7 py-4 text-base font-bold text-[#102b36] transition hover:bg-white"
+          >
+            <MessageCircle size={22} />
+            Cotizá tu servicio ya
+            <ArrowRight size={19} />
+          </a>
+
+        </div>
       </section>
 
       {/* ESPESORES DE ESPUMA */}
