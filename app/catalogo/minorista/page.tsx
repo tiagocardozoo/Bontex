@@ -411,8 +411,12 @@ export default function CatalogoMinorista() {
               >
                 <div className="relative h-60 overflow-hidden bg-slate-200">
                   <img
-                    src={varianteSeleccionada.imagen}
-                    alt={`${producto.nombre} ${varianteSeleccionada.color}`}
+                    src={
+                      producto.id === 'jersey-bondeado'
+                        ? '/images/telas-bondeadas.jpeg'
+                        : producto.variantes[0].imagen
+                    }
+                    alt={`Foto de portada de ${producto.nombre}`}
                     className="h-full w-full object-cover"
                   />
                 </div>
