@@ -47,7 +47,7 @@ export default function ServicioBondeadoPage() {
             className="absolute inset-0 h-full w-full object-cover"
           >
             <source
-              src="/videos/bondeado.mp4"
+              src="/videos/bondeado.MP4"
               type="video/mp4"
             />
           </video>
