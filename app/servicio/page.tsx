@@ -6,13 +6,14 @@ import {
 } from 'lucide-react'
 
 // ESPESORES DISPONIBLES
+// Las fotografías se cargarán en public/images/espesores/
 const espesores = [
-  { medida: '2 mm' },
-  { medida: '2.5 mm' },
-  { medida: '3 mm' },
-  { medida: '4 mm' },
-  { medida: '5 mm' },
-  { medida: '10 mm' },
+  { medida: '2 mm', imagen: '/images/espesores/2mm.jpg' },
+  { medida: '2.5 mm', imagen: '/images/espesores/2-5mm.jpg' },
+  { medida: '3 mm', imagen: '/images/espesores/3mm.jpg' },
+  { medida: '4 mm', imagen: '/images/espesores/4mm.jpg' },
+  { medida: '5 mm', imagen: '/images/espesores/5mm.jpg' },
+  { medida: '10 mm', imagen: '/images/espesores/10mm.jpg' },
 ]
 
 // WHATSAPP DE BONTEX
@@ -29,7 +30,7 @@ export default function ServicioBondeadoPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#102b36] via-[#173e4b] to-[#0b2430] text-white">
 
-      {/* PRIMERA SECCIÓN: VIDEO DE FONDO SOLAMENTE ACÁ */}
+      {/* PRIMERA SECCIÓN: VIDEO DE FONDO SOLO AQUÍ */}
       <section className="relative isolate overflow-hidden bg-[#102b36]">
 
         {/* VIDEO */}
@@ -98,33 +99,58 @@ export default function ServicioBondeadoPage() {
       {/* DESDE ACÁ VUELVE EL FONDO AZUL NORMAL */}
 
       {/* ESPESORES DE ESPUMA */}
-      <section className="mx-auto max-w-7xl px-5 pb-20 pt-16 md:px-8">
+      <section className="mx-auto max-w-7xl px-5 pb-16 pt-16 md:px-8">
 
         <h2 className="mb-8 font-serif text-3xl text-white md:text-4xl">
           Trabajamos con distintos espesores de espuma
         </h2>
 
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-6 sm:gap-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+
           {espesores.map((espesor) => (
             <div
               key={espesor.medida}
-              className="flex aspect-square flex-col items-center justify-center rounded-xl border border-[#8ed0db]/35 bg-[#1e4d5c]/70 p-3 text-center shadow-lg transition hover:border-[#8ed0db] hover:bg-[#286879]"
+              className="overflow-hidden rounded-2xl border border-[#8ed0db]/35 bg-[#1e4d5c]/70 shadow-lg transition hover:border-[#8ed0db]"
             >
-              <span className="font-serif text-3xl font-semibold text-white md:text-4xl">
-                {espesor.medida}
-              </span>
+
+              {/* FOTOGRAFÍA DEL ESPESOR */}
+              <div className="relative aspect-square overflow-hidden bg-[#d5e0df]">
+
+                <img
+                  src={espesor.imagen}
+                  alt={`Espuma de ${espesor.medida} de espesor`}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover"
+                  onError={undefined}
+                />
+
+                <div className="pointer-events-none absolute inset-0 bg-[#102b36]/10" />
+
+              </div>
+
+              {/* MEDIDA DEBAJO DE LA FOTOGRAFÍA */}
+              <div className="flex min-h-20 items-center justify-center px-3 py-4 text-center">
+
+                <span className="font-sans text-xl font-semibold tracking-normal text-white md:text-2xl">
+                  {espesor.medida}
+                </span>
+
+              </div>
+
             </div>
           ))}
+
         </div>
       </section>
 
-      {/* OPCIONES DE RESPALDO */}
+      {/* TERMINACIONES DISPONIBLES */}
       <section className="mx-auto max-w-7xl px-5 pb-20 md:px-8">
 
-        <div className="border-t border-white/20 pt-14">
+        {/* SIN LÍNEA SEPARADORA */}
+        <div className="pt-8">
 
           <h2 className="font-serif text-3xl text-white md:text-4xl">
-            Con o sin respaldo
+            Terminaciones disponibles
           </h2>
 
           <p className="mt-4 max-w-xl text-white/70">
@@ -132,42 +158,55 @@ export default function ServicioBondeadoPage() {
             necesidades de cada tela.
           </p>
 
-          <div className="mt-8 grid max-w-2xl grid-cols-2 gap-3 sm:gap-5">
+          {/* TRES OPCIONES */}
+          <div className="mt-8 grid gap-4 sm:grid-cols-3 sm:gap-5">
 
             {/* CON RESPALDO */}
-            <div className="flex min-h-32 flex-col items-center justify-center rounded-xl border border-[#8ed0db]/35 bg-white/10 p-5 text-center">
-              <Layers className="mb-3 text-[#8ed0db]" size={28} />
+            <div className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-[#8ed0db]/35 bg-white/10 p-5 text-center">
+
+              <Layers
+                className="mb-3 text-[#8ed0db]"
+                size={28}
+              />
 
               <h3 className="text-base font-semibold sm:text-xl">
                 Con respaldo
               </h3>
+
+              <p className="mt-2 text-sm text-white/65">
+                (No tejido)
+              </p>
+
             </div>
 
             {/* SIN RESPALDO */}
-            <div className="flex min-h-32 flex-col items-center justify-center rounded-xl border border-[#8ed0db]/35 bg-white/10 p-5 text-center">
-              <Layers className="mb-3 text-[#8ed0db]" size={28} />
+            <div className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-[#8ed0db]/35 bg-white/10 p-5 text-center">
+
+              <Layers
+                className="mb-3 text-[#8ed0db]"
+                size={28}
+              />
 
               <h3 className="text-base font-semibold sm:text-xl">
                 Sin respaldo
               </h3>
+
             </div>
 
-          </div>
+            {/* TELA CON TELA */}
+            <div className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-[#8ed0db]/35 bg-white/10 p-5 text-center">
 
-          {/* NO TEJIDO */}
-          <div className="mt-7 max-w-2xl rounded-xl border border-[#8ed0db]/25 bg-[#1e4d5c]/70 px-6 py-7">
+              <Layers
+                className="mb-3 text-[#8ed0db]"
+                size={28}
+              />
 
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8ed0db]">
-              MATERIAL DE RESPALDO
-            </p>
+              <h3 className="text-base font-semibold sm:text-xl">
+                Tela con tela pegado
+              </h3>
 
-            <h3 className="mt-3 font-serif text-3xl text-white">
-              No tejido
-            </h3>
+            </div>
 
-            <p className="mt-3 text-sm text-white/70">
-              Opción de respaldo para diferentes aplicaciones textiles.
-            </p>
           </div>
 
         </div>
