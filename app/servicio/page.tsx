@@ -143,10 +143,9 @@ export default function ServicioBondeadoPage() {
         </div>
       </section>
 
+    
       {/* TERMINACIONES DISPONIBLES */}
       <section className="mx-auto max-w-7xl px-5 pb-20 md:px-8">
-
-        {/* SIN LÍNEA SEPARADORA */}
         <div className="pt-8">
 
           <h2 className="font-serif text-3xl text-white md:text-4xl">
@@ -154,63 +153,69 @@ export default function ServicioBondeadoPage() {
           </h2>
 
           <p className="mt-4 max-w-xl text-white/70">
-            Adaptamos la terminación según las
-            necesidades de cada tela.
+            Adaptamos la terminación según las necesidades de cada tela.
           </p>
 
-          {/* TRES OPCIONES */}
-          <div className="mt-8 grid gap-4 sm:grid-cols-3 sm:gap-5">
+          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
 
             {/* CON RESPALDO */}
-            <div className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-[#8ed0db]/35 bg-white/10 p-5 text-center">
+            <div className="overflow-hidden rounded-2xl border border-[#8ed0db]/35 bg-[#1e4d5c]/70 shadow-lg">
+              <div className="aspect-[4/3] overflow-hidden bg-[#d5e0df]">
+                <img
+                  src="/images/terminaciones/con-respaldo.jpg"
+                  alt="Tela bondeada con respaldo no tejido"
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              </div>
 
-              <Layers
-                className="mb-3 text-[#8ed0db]"
-                size={28}
-              />
-
-              <h3 className="text-base font-semibold sm:text-xl">
-                Con respaldo
-              </h3>
-
-              <p className="mt-2 text-sm text-white/65">
-                (No tejido)
-              </p>
-
+              <div className="flex min-h-20 items-center justify-center px-4 py-5 text-center">
+                <h3 className="font-sans text-lg font-semibold text-white md:text-xl">
+                  Con respaldo (no tejido)
+                </h3>
+              </div>
             </div>
 
             {/* SIN RESPALDO */}
-            <div className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-[#8ed0db]/35 bg-white/10 p-5 text-center">
+            <div className="overflow-hidden rounded-2xl border border-[#8ed0db]/35 bg-[#1e4d5c]/70 shadow-lg">
+              <div className="aspect-[4/3] overflow-hidden bg-[#d5e0df]">
+                <img
+                  src="/images/terminaciones/sin-respaldo.jpg"
+                  alt="Tela bondeada sin respaldo"
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              </div>
 
-              <Layers
-                className="mb-3 text-[#8ed0db]"
-                size={28}
-              />
-
-              <h3 className="text-base font-semibold sm:text-xl">
-                Sin respaldo
-              </h3>
-
+              <div className="flex min-h-20 items-center justify-center px-4 py-5 text-center">
+                <h3 className="font-sans text-lg font-semibold text-white md:text-xl">
+                  Sin respaldo
+                </h3>
+              </div>
             </div>
 
             {/* TELA CON TELA */}
-            <div className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-[#8ed0db]/35 bg-white/10 p-5 text-center">
+            <div className="overflow-hidden rounded-2xl border border-[#8ed0db]/35 bg-[#1e4d5c]/70 shadow-lg">
+              <div className="aspect-[4/3] overflow-hidden bg-[#d5e0df]">
+                <img
+                  src="/images/terminaciones/tela-con-tela.jpg"
+                  alt="Dos telas pegadas mediante bondeado"
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              </div>
 
-              <Layers
-                className="mb-3 text-[#8ed0db]"
-                size={28}
-              />
-
-              <h3 className="text-base font-semibold sm:text-xl">
-                Tela con tela pegado
-              </h3>
-
+              <div className="flex min-h-20 items-center justify-center px-4 py-5 text-center">
+                <h3 className="font-sans text-lg font-semibold text-white md:text-xl">
+                  Tela con tela pegado
+                </h3>
+              </div>
             </div>
 
           </div>
-
         </div>
       </section>
+
 
       {/* COTIZACIÓN POR WHATSAPP */}
       <section className="border-t border-white/15 bg-[#0b2430]/50 px-5 py-16 md:px-8">
