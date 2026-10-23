@@ -19,7 +19,7 @@ const espesores = [
   { medida: '10 mm', imagen: '/images/espesores/10mm.jpg' },
 ]
 
-// TERMINACIONES
+// TERMINACIONES DISPONIBLES
 const terminaciones = [
   {
     nombre: 'Con respaldo (no tejido)',
@@ -66,8 +66,7 @@ const mensaje = encodeURIComponent(
   '¡Hola! Vine desde la página de Bontex y quisiera cotizar el servicio de bondeado. Quiero consultar por los espesores de espuma y las opciones de respaldo. ¡Gracias!'
 )
 
-const enlaceWhatsapp =
-  `https://wa.me/${WHATSAPP}?text=${mensaje}`
+const enlaceWhatsapp = `https://wa.me/${WHATSAPP}?text=${mensaje}`
 
 // IMAGEN CON FONDO PROVISORIO SI FALTA EL ARCHIVO
 function Foto({
@@ -205,7 +204,7 @@ export default function ServicioBondeadoPage() {
         </div>
       </section>
 
-      {/* ESPESORES - TAMAÑO COMPACTO ORIGINAL */}
+      {/* ESPESORES - TAMAÑO COMPACTO */}
       <section className="mx-auto max-w-7xl px-5 pb-16 pt-16 md:px-8">
 
         <h2 className="mb-8 font-serif text-3xl text-white md:text-4xl">
@@ -235,7 +234,7 @@ export default function ServicioBondeadoPage() {
         </div>
       </section>
 
-      {/* TERMINACIONES - TAMAÑO ORIGINAL */}
+      {/* TERMINACIONES - TAMAÑO COMPACTO */}
       <section className="mx-auto max-w-7xl px-5 pb-20 md:px-8">
 
         <h2 className="font-serif text-3xl text-white md:text-4xl">
@@ -278,54 +277,53 @@ export default function ServicioBondeadoPage() {
       >
         <div className="mx-auto max-w-7xl">
 
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#8ed0db]">
-            EL VALOR AGREGADO DE NUESTRAS TELAS
-          </p>
+          {/* DOS COLUMNAS ALINEADAS DESDE ARRIBA */}
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-14">
 
-          <h2 className="mt-5 font-serif text-4xl text-white md:text-5xl">
-            ¿Qué es el bondeado?
-          </h2>
+            {/* COLUMNA IZQUIERDA */}
+            <div>
 
-          {/* DOS COLUMNAS: TEXTO Y EJEMPLOS */}
-          <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-14">
+              <h2 className="font-serif text-4xl text-white md:text-5xl">
+                ¿Qué es el bondeado?
+              </h2>
 
-            {/* MITAD IZQUIERDA: EXPLICACIÓN */}
-            <div className="space-y-6 text-base leading-relaxed text-white/75 md:text-lg">
+              <div className="mt-8 space-y-6 text-base leading-relaxed text-white/75 md:text-lg">
 
-              <p>
-                El bondeado es un proceso mediante el cual unimos
-                materiales textiles para aportarles mayor cuerpo,
-                estructura y una mejor terminación.
-              </p>
+                <p>
+                  El bondeado es un proceso mediante el cual unimos
+                  materiales textiles para aportarles mayor cuerpo,
+                  estructura y una mejor terminación.
+                </p>
 
-              <p>
-                ¿Qué significa esto para tu producto? Que una tela
-                puede transformarse en un material con más firmeza
-                y estabilidad, ayudándote a conseguir mejores
-                resultados en cada diseño.
-              </p>
+                <p>
+                  ¿Qué significa esto para tu producto? Que una tela
+                  puede transformarse en un material con más firmeza
+                  y estabilidad, ayudándote a conseguir mejores
+                  resultados en cada diseño.
+                </p>
 
-              <p>
-                En Bontex trabajamos para darle más forma y
-                resistencia a tus productos finales, aumentando
-                su valor agregado y mejorando su presentación.
-              </p>
+                <p>
+                  En Bontex trabajamos para darle más forma y
+                  resistencia a tus productos finales, aumentando
+                  su valor agregado y mejorando su presentación.
+                </p>
 
-              <p className="font-medium text-white">
-                Porque muchas veces la diferencia está en aquello
-                que no se ve, pero se nota en el resultado.
-              </p>
+                <p className="font-medium text-white">
+                  Porque muchas veces la diferencia está en aquello
+                  que no se ve, pero se nota en el resultado.
+                </p>
 
+              </div>
             </div>
 
-            {/* MITAD DERECHA: EJEMPLOS */}
+            {/* COLUMNA DERECHA */}
             <div className="min-w-0">
 
-              <h3 className="mb-5 font-serif text-2xl text-white md:text-3xl">
-                Ejemplos
+              <h3 className="mb-4 font-serif text-xl text-white md:text-2xl">
+                Algunos ejemplos:
               </h3>
 
-              {/* CUADRO FIJO */}
+              {/* CUADRO COMPARATIVO MÁS ARRIBA */}
               <div
                 onMouseEnter={() => setPausado(true)}
                 onMouseLeave={() => setPausado(false)}
@@ -342,7 +340,7 @@ export default function ServicioBondeadoPage() {
                 className="overflow-hidden rounded-2xl border border-[#8ed0db]/30 bg-[#153844] shadow-xl"
               >
 
-                {/* TÍTULO Y FLECHAS */}
+                {/* TÍTULO DEL EJEMPLO Y FLECHAS */}
                 <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-4 md:px-5">
 
                   <div>
@@ -378,7 +376,7 @@ export default function ServicioBondeadoPage() {
                   </div>
                 </div>
 
-                {/* DOS FOTOS LADO A LADO */}
+                {/* DOS FOTOGRAFÍAS */}
                 <div className="grid grid-cols-2">
 
                   {/* SIN BONDEADO */}
@@ -427,7 +425,6 @@ export default function ServicioBondeadoPage() {
 
                 {/* INDICADORES */}
                 <div className="flex items-center justify-center gap-2 border-t border-white/10 px-4 py-4">
-
                   {ejemplos.map((item, indice) => (
                     <button
                       key={item.nombre}
@@ -441,11 +438,11 @@ export default function ServicioBondeadoPage() {
                       }
                     />
                   ))}
-
                 </div>
 
               </div>
             </div>
+
           </div>
         </div>
       </section>
