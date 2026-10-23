@@ -100,31 +100,46 @@ export default function NosotrosPage() {
         </div>
       </section>
 
-{/* EMPRESAS QUE TRABAJAN CON NOSOTROS */}
-<section className="px-5 pb-12 pt-0 md:px-8 md:pb-16 md:pt-0">
-  <div className="mx-auto max-w-7xl">
+      {/* EMPRESAS QUE TRABAJAN CON NOSOTROS */}
+      <section className="px-5 pb-12 pt-0 md:px-8 md:pb-16 md:pt-0">
+        <div className="mx-auto max-w-7xl">
 
-    <h2 className="mb-10 text-center font-serif text-3xl text-white md:text-4xl">
-      Algunas empresas que trabajan con nosotros
-    </h2>
+          <h2 className="mb-10 text-center font-serif text-3xl text-white md:text-4xl">
+            Algunas empresas que trabajan con nosotros
+          </h2>
 
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
 
-      {/* ESPACIOS PARA LOS FUTUROS LOGOS */}
-      {[1, 2, 3, 4, 5].map((numero) => (
-        <div
-          key={numero}
-          className="flex aspect-[4/3] items-center justify-center rounded-xl border border-[#8ed0db]/25 bg-white/10 p-5"
-        >
-          <span className="text-center text-xs text-white/40">
-            Logo empresa {numero}
-          </span>
+            {/* EMPRESA 1: LAMIC */}
+            <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl border border-[#8ed0db]/25 bg-white p-5 shadow-lg">
+
+              <div className="relative h-full w-full">
+                <Image
+                  src="/images/Lamic.png"
+                  alt="Logo de LAMIC"
+                  fill
+                  sizes="(min-width: 1024px) 220px, (min-width: 640px) 30vw, 45vw"
+                  className="object-contain"
+                />
+              </div>
+
+            </div>
+
+            {/* ESPACIOS PARA FUTURAS EMPRESAS */}
+            {[2, 3, 4, 5].map((numero) => (
+              <div
+                key={numero}
+                className="flex aspect-[4/3] items-center justify-center rounded-xl border border-[#8ed0db]/25 bg-white/10 p-5"
+              >
+                <span className="text-center text-xs text-white/40">
+                  Logo empresa {numero}
+                </span>
+              </div>
+            ))}
+
+          </div>
         </div>
-      ))}
-
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* NUESTRA TRAYECTORIA */}
       <section className="border-y border-white/15 bg-white/5">
