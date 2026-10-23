@@ -6,7 +6,7 @@ const catalogos = [
   {
     titulo: 'CATÁLOGO MINORISTA',
     descripcion:
-    'Sin mínimo de compra.',
+    'Mínimo de compra de 5 metros.',
     destino: '/catalogo/minorista',
     boton: 'Ver catálogo minorista',
     tipo: 'minorista',
