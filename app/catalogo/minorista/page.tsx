@@ -16,7 +16,7 @@ type Variante = {
   id: string
   espesor: string
   color: string
-  precio: number
+  precio: number | null
   imagen: string
   muestra: string
 }
@@ -37,31 +37,108 @@ const productos: Producto[] = [
     descripcion: 'Tela bondeada ideal para múltiples aplicaciones.',
     variantes: [
       {
-        id: 'jersey-2-5-amarillo',
+        id: 'jersey-2-5-amarillo-fluo',
         espesor: '2,5 mm',
-        color: 'Amarillo',
+        color: 'Amarillo fluo',
         precio: 5000,
-        imagen:
-          'https://dummyimage.com/900x700/F4CB28/102B36&text=Jersey+Amarillo',
-        muestra: '#F4CB28',
+        imagen: 'https://dummyimage.com/900x700/EFFF00/102B36&text=Jersey+Amarillo+Fluo',
+        muestra: '#EDFF00',
       },
       {
-        id: 'jersey-2-5-negro',
+        id: 'jersey-2-5-azul-marino',
         espesor: '2,5 mm',
-        color: 'Negro',
+        color: 'Azul marino',
         precio: 5000,
-        imagen:
-          'https://dummyimage.com/900x700/222222/FFFFFF&text=Jersey+Negro',
-        muestra: '#222222',
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_747535-MLA90710923645_082025-R.webp',
+        muestra: '#172752',
       },
       {
         id: 'jersey-2-5-blanco',
         espesor: '2,5 mm',
         color: 'Blanco',
         precio: 5000,
-        imagen:
-          'https://dummyimage.com/900x700/F5F5F5/102B36&text=Jersey+Blanco',
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_890606-MLA69941397615_062023-R.webp',
         muestra: '#F5F5F5',
+      },
+      {
+        id: 'jersey-2-5-bordo',
+        espesor: '2,5 mm',
+        color: 'Bordó',
+        precio: 5000,
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_719249-MLA117819108023_092026-R.webp',
+        muestra: '#751D34',
+      },
+      {
+        id: 'jersey-2-5-celeste',
+        espesor: '2,5 mm',
+        color: 'Celeste',
+        precio: 5000,
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_850382-MLA88788521006_082025-R.webp',
+        muestra: '#73C7E6',
+      },
+      {
+        id: 'jersey-2-5-fuxia-fluo',
+        espesor: '2,5 mm',
+        color: 'Fuxia Fluo',
+        precio: 5000,
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_669655-MLA90379518244_082025-R.webp',
+        muestra: '#FF1493',
+      },
+      {
+        id: 'jersey-2-5-marron-oscuro',
+        espesor: '2,5 mm',
+        color: 'Marrón oscuro',
+        precio: 5000,
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_986369-MLA116324835932_092026-R.webp',
+        muestra: '#4B3029',
+      },
+      {
+        id: 'jersey-2-5-naranja-fluo',
+        espesor: '2,5 mm',
+        color: 'Naranja fluo',
+        precio: 5000,
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_621513-MLA88788174516_082025-R.webp',
+        muestra: '#FF6B00',
+      },
+      {
+        id: 'jersey-2-5-negro',
+        espesor: '2,5 mm',
+        color: 'Negro',
+        precio: 5000,
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_658019-MLA69941458823_062023-R.webp',
+        muestra: '#222222',
+      },
+      {
+        id: 'jersey-2-5-oro-amarillo',
+        espesor: '2,5 mm',
+        color: 'Oro amarillo',
+        precio: 5000,
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_854791-MLA69941396221_062023-R.webp',
+        muestra: '#D8AD24',
+      },
+      {
+        id: 'jersey-2-5-rojo',
+        espesor: '2,5 mm',
+        color: 'Rojo',
+        precio: 5000,
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_658075-MLA88788243272_082025-R.webp',
+        muestra: '#D3272F',
+      },
+      {
+        id: 'jersey-2-5-verde-fluo',
+        espesor: '2,5 mm',
+        color: 'Verde Flúo',
+        precio: 5000,
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_865084-MLA69922760962_062023-R.webp',
+        muestra: '#50FF11',
+      },
+      {
+        id: 'jersey-2-5-violeta-oscuro',
+        espesor: '2,5 mm',
+        color: 'Violeta oscuro',
+        precio: 5000,
+        imagen: 'https://http2.mlstatic.com/D_Q_NP_676960-MLA88788876868_082025-R.webp',
+        muestra: '#4B237A',
       },
     ],
   },
@@ -99,6 +176,34 @@ const productos: Producto[] = [
       },
     ],
   },
+  {
+    id: 'bondeado-para-relleno',
+    nombre: 'Bondeado para relleno',
+    categoria: 'Bondeado para relleno',
+    descripcion: 'Consultá por las características y disponibilidad de esta tela.',
+    variantes: [{
+      id: 'relleno-a-consultar',
+      espesor: 'A consultar',
+      color: 'A consultar',
+      precio: null,
+      imagen: '',
+      muestra: '#BFC8CC',
+    }],
+  },
+  {
+    id: 'ecocuero-bondeado',
+    nombre: 'Ecocuero bondeado',
+    categoria: 'Ecocuero bondeado',
+    descripcion: 'Consultá por las características y disponibilidad de esta tela.',
+    variantes: [{
+      id: 'ecocuero-a-consultar',
+      espesor: 'A consultar',
+      color: 'A consultar',
+      precio: null,
+      imagen: '',
+      muestra: '#BFC8CC',
+    }],
+  },
 ]
 
 const filtros = [
@@ -106,12 +211,14 @@ const filtros = [
   'Jersey',
   'Símil neopreno',
   'Velour',
+  'Bondeado para relleno',
+  'Ecocuero bondeado',
 ]
 
 const WHATSAPP = '5491132043169'
 
-const formatoPrecio = (valor: number) =>
-  '$' + valor.toLocaleString('es-AR')
+const formatoPrecio = (valor: number | null) =>
+  valor === null ? 'Precio a consultar' : '$' + valor.toLocaleString('es-AR')
 
 function crearClave(productoId: string, varianteId: string) {
   return `${productoId}__${varianteId}`
@@ -170,10 +277,12 @@ export default function CatalogoMinorista() {
     0
   )
 
+  const tienePrecioAConsultar = itemsCarrito.some((item) => item.variante.precio === null)
   const totalPrecio = itemsCarrito.reduce(
-    (total, item) => total + item.variante.precio * item.metros,
+    (total, item) => total + (item.variante.precio ?? 0) * item.metros,
     0
   )
+  const resumenPrecio = tienePrecioAConsultar ? 'A confirmar' : formatoPrecio(totalPrecio)
 
   function seleccionarEspesor(producto: Producto, espesor: string) {
     const varianteActual = producto.variantes.find(
@@ -264,7 +373,7 @@ export default function CatalogoMinorista() {
 
     const detalle = itemsCarrito
       .map((item) => {
-        const subtotal = item.variante.precio * item.metros
+        const subtotal = item.variante.precio === null ? null : item.variante.precio * item.metros
 
         return (
           `• ${item.metros} metros de ${item.producto.nombre}\n` +
@@ -283,7 +392,7 @@ export default function CatalogoMinorista() {
       '\n\nTotal de metros: ' +
       totalMetros +
       '\nTotal del pedido: ' +
-      formatoPrecio(totalPrecio) +
+      resumenPrecio +
       '\n\n¿Me confirman la disponibilidad de las telas seleccionadas?\n¡Gracias!'
 
     const url = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`
@@ -356,7 +465,7 @@ export default function CatalogoMinorista() {
                 Total del pedido
               </p>
               <p className="text-2xl font-bold">
-                {formatoPrecio(totalPrecio)}
+                {resumenPrecio}
               </p>
             </div>
 
@@ -410,15 +519,17 @@ export default function CatalogoMinorista() {
                 className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-md"
               >
                 <div className="relative h-60 overflow-hidden bg-slate-200">
-                  <img
-                    src={
-                      producto.id === 'jersey-bondeado'
-                        ? '/images/telas-bondeadas.jpeg'
-                        : producto.variantes[0].imagen
-                    }
-                    alt={`Foto de portada de ${producto.nombre}`}
-                    className="h-full w-full object-cover"
-                  />
+                  {(producto.id === 'jersey-bondeado' || producto.variantes[0].imagen) ? (
+                    <img
+                      src={producto.id === 'jersey-bondeado' ? '/images/telas-bondeadas.jpeg' : producto.variantes[0].imagen}
+                      alt={`Foto de portada de ${producto.nombre}`}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-[#dce8eb] text-sm text-[#1e4d5c]">
+                      Fotografía próximamente
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-1 flex-col p-6">
@@ -489,11 +600,17 @@ export default function CatalogoMinorista() {
               className="relative z-10 grid max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-2xl bg-white shadow-2xl md:grid-cols-2"
             >
               <div className="relative min-h-56 bg-slate-200 sm:min-h-80 md:min-h-[530px]">
-                <img
-                  src={varianteSeleccionada.imagen}
-                  alt={`${producto.nombre}, color ${varianteSeleccionada.color}`}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
+                {varianteSeleccionada.imagen ? (
+                  <img
+                    src={varianteSeleccionada.imagen}
+                    alt={`${producto.nombre}, color ${varianteSeleccionada.color}`}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-[#dce8eb] text-[#1e4d5c]">
+                    Fotografía próximamente
+                  </div>
+                )}
               </div>
 
               <div className="relative p-6 pt-14 sm:p-9 sm:pt-14">
@@ -642,7 +759,7 @@ export default function CatalogoMinorista() {
             </p>
 
             <p className="text-sm font-bold">
-              {formatoPrecio(totalPrecio)}
+              {resumenPrecio}
             </p>
           </div>
         </button>
@@ -759,7 +876,7 @@ export default function CatalogoMinorista() {
 
                         <strong className="text-[#1e4d5c]">
                           {formatoPrecio(
-                            item.variante.precio * item.metros
+                            item.variante.precio === null ? null : item.variante.precio * item.metros
                           )}
                         </strong>
                       </div>
@@ -794,7 +911,7 @@ export default function CatalogoMinorista() {
                 </span>
 
                 <strong className="text-2xl">
-                  {formatoPrecio(totalPrecio)}
+                  {resumenPrecio}
                 </strong>
               </div>
 
