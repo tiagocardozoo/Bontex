@@ -215,7 +215,7 @@ const filtros = [
   'Ecocuero bondeado',
 ]
 
-const WHATSAPP = '55491173438981'
+const WHATSAPP = '5491173438981'
 
 const formatoPrecio = (valor: number | null) =>
   valor === null ? 'Precio a consultar' : '$' + valor.toLocaleString('es-AR')
