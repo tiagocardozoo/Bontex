@@ -43,7 +43,7 @@ const productos = [
   },
 ]
 
-const WHATSAPP = '5491132043169'
+const WHATSAPP = '5491173438981'
 const MINIMO = 50
 
 export default function CatalogoMayorista() {
