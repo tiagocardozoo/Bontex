@@ -60,7 +60,7 @@ const ejemplos = [
   },
 ]
 
-const WHATSAPP = '5491132043169'
+const WHATSAPP = '5491173438981'
 
 const mensaje = encodeURIComponent(
   '¡Hola! Vine desde la página de Bontex y quisiera cotizar el servicio de bondeado. Quiero consultar por los espesores de espuma y las opciones de respaldo. ¡Gracias!'
