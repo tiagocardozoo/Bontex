@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, MessageCircle } from 'lucide-react'
 
-const WHATSAPP = '5491132043169'
+const WHATSAPP = '5491173438981'
 
 export default function NosotrosPage() {
   return (
