@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft,
@@ -43,6 +43,17 @@ const productos = [
   },
 ]
 
+type LineaTransferida = {
+  productoId: string
+  nombre: string
+  varianteId: string
+  color: string
+  espesor: string
+  metros: number
+  imagen: string
+  muestra: string
+}
+
 const WHATSAPP = '5491173438981'
 const MINIMO = 50
 
@@ -50,17 +61,61 @@ export default function CatalogoMayorista() {
   const [cantidades, setCantidades] = useState<Record<string, string>>({})
   const [carrito, setCarrito] = useState<Record<string, number>>({})
   const [carritoAbierto, setCarritoAbierto] = useState(false)
+  const [transferidos, setTransferidos] = useState<LineaTransferida[]>([])
+  const [avisoTransferencia, setAvisoTransferencia] = useState(false)
+
+  useEffect(() => {
+    // El traspaso se lee una única vez al entrar desde el catálogo minorista.
+    if (new URLSearchParams(window.location.search).get('desde') !== 'minorista') return
+    try {
+      const guardado = window.sessionStorage.getItem('bontex-carrito-traspaso-mayorista')
+      if (!guardado) return
+      const datos: unknown = JSON.parse(guardado)
+      if (!Array.isArray(datos)) return
+      const lineas = datos.filter((linea): linea is LineaTransferida =>
+        typeof linea === 'object' && linea !== null &&
+        typeof linea.productoId === 'string' && typeof linea.nombre === 'string' &&
+        typeof linea.varianteId === 'string' && typeof linea.color === 'string' &&
+        typeof linea.espesor === 'string' && typeof linea.metros === 'number' &&
+        Number.isInteger(linea.metros) && linea.metros > 0
+      ).map((linea) => ({ ...linea,
+        imagen: typeof linea.imagen === 'string' ? linea.imagen : '',
+        muestra: typeof linea.muestra === 'string' ? linea.muestra : '#BFC8CC',
+      }))
+      setTransferidos(lineas)
+      setAvisoTransferencia(lineas.length > 0)
+      setCarritoAbierto(lineas.length > 0)
+      window.sessionStorage.removeItem('bontex-carrito-traspaso-mayorista')
+    } catch { /* Si está bloqueado el almacenamiento, mostrar el catálogo normal. */ }
+  }, [])
+
+  const metrosTransferidos = transferidos.reduce((total, item) => total + item.metros, 0)
+  const resumenTransferidos = Object.values(transferidos.reduce((grupos, item) => {
+    grupos[item.productoId] = (grupos[item.productoId] || 0) + item.metros
+    return grupos
+  }, {} as Record<string, number>))
+  const hayProductoMayoristaTransferido = resumenTransferidos.some((metros) => metros >= MINIMO)
+
+  function cambiarTransferido(indice: number, cambio: number) {
+    setTransferidos((actual) => actual.map((item, i) =>
+      i === indice ? { ...item, metros: Math.max(1, item.metros + cambio) } : item
+    ))
+  }
+  function eliminarTransferido(indice: number) {
+    setTransferidos((actual) => actual.filter((_, i) => i !== indice))
+  }
+
 
   const productosElegidos = productos.filter(
     (producto) => (carrito[producto.id] || 0) >= MINIMO
   )
 
-  const cantidadProductos = productosElegidos.length
+  const cantidadProductos = productosElegidos.length + transferidos.length
 
   const totalMetros = productosElegidos.reduce(
     (total, producto) => total + carrito[producto.id],
     0
-  )
+  ) + metrosTransferidos
 
   function agregarProducto(id: string) {
     const cantidad = Number(cantidades[id] ?? '50')
@@ -105,7 +160,7 @@ export default function CatalogoMayorista() {
   }
 
   function realizarPedido() {
-    if (productosElegidos.length === 0) return
+    if (productosElegidos.length === 0 && transferidos.length === 0) return
 
     const detalle = productosElegidos
       .map((producto) => {
@@ -120,12 +175,20 @@ export default function CatalogoMayorista() {
       })
       .join('\n\n')
 
-   
+    const detalleTransferidos = transferidos.map((item) =>
+      `• ${item.metros} metros de ${item.nombre}\n` +
+      `  Color: ${item.color}\n` +
+      `  Espesor: ${item.espesor}\n` +
+      '  Precio mayorista: A convenir'
+    ).join('\n\n')
+
+    const detalleCompleto = [detalle, detalleTransferidos].filter(Boolean).join('\n\n')
+
 const mensaje =
   '¡Hola! Vine desde la página de Bontex ' +
   'y quiero realizar este pedido:\n\n' +
   '* PEDIDO MAYORISTA*\n\n' +
-  detalle +
+  detalleCompleto +
 
       '\n\nTotal de metros: ' + totalMetros +
       '\n\nQuisiera coordinar el espesor y consultar ' +
@@ -223,6 +286,16 @@ const mensaje =
           </div>
         </div>
       </section>
+
+      {avisoTransferencia && (
+        <section className="mx-auto max-w-7xl px-5 pt-6">
+          <div className="rounded-xl border border-[#8ed0db] bg-[#e2f5f7] p-5 text-[#102b36]">
+            <p className="font-bold">Recuperamos tu selección del catálogo minorista.</p>
+            <p className="mt-1 text-sm">Conservamos las telas, colores y metros. Los precios mayoristas son a convenir. Podés revisar tu carrito y continuar comprando.</p>
+            {!hayProductoMayoristaTransferido && transferidos.length > 0 && <p className="mt-2 text-sm font-semibold">Para acceder a condiciones mayoristas necesitás al menos 50 metros de una misma tela, sumando sus colores.</p>}
+          </div>
+        </section>
+      )}
 
       {/* PRODUCTOS */}
       <section className="mx-auto max-w-7xl px-5 py-12">
@@ -409,7 +482,7 @@ const mensaje =
             {/* CONTENIDO DEL CARRITO */}
             <div className="flex-1 overflow-y-auto px-5 py-6">
 
-              {productosElegidos.length === 0 ? (
+              {cantidadProductos === 0 ? (
                 <div className="py-16 text-center text-slate-500">
                   <ShoppingCart
                     size={46}
@@ -424,6 +497,24 @@ const mensaje =
                 </div>
               ) : (
                 <div className="space-y-5">
+                  {transferidos.map((item, indice) => (
+                    <div key={`${item.productoId}-${item.varianteId}-${indice}`} className="rounded-xl border border-[#8ed0db] bg-[#f0f8f9] p-4">
+                      <div className="flex justify-between gap-3">
+                        <div>
+                          <h3 className="font-bold text-[#102b36]">{item.nombre}</h3>
+                          <p className="mt-1 text-sm text-slate-500">Color: {item.color}</p>
+                          <p className="mt-1 text-sm text-slate-500">Espesor: {item.espesor}</p>
+                          <p className="mt-1 text-sm font-semibold text-[#1e4d5c]">Precio mayorista a convenir</p>
+                        </div>
+                        <button type="button" onClick={() => eliminarTransferido(indice)} aria-label={`Eliminar ${item.nombre} ${item.color}`} className="self-start text-red-500"><Trash2 size={19}/></button>
+                      </div>
+                      <div className="mt-4 flex items-center gap-3">
+                        <button type="button" onClick={() => cambiarTransferido(indice, -5)} className="rounded-lg border border-slate-300 p-2"><Minus size={16}/></button>
+                        <span className="min-w-14 text-center font-semibold text-[#102b36]">{item.metros} m</span>
+                        <button type="button" onClick={() => cambiarTransferido(indice, 5)} className="rounded-lg border border-slate-300 p-2"><Plus size={16}/></button>
+                      </div>
+                    </div>
+                  ))}
                   {productosElegidos.map((producto) => (
                     <div
                       key={producto.id}
@@ -487,6 +578,9 @@ const mensaje =
                     </div>
                   ))}
 
+                  {transferidos.length > 0 && !hayProductoMayoristaTransferido && (
+                    <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">Todavía no alcanzaste 50 metros de una misma tela. Podés ajustar las cantidades o consultar igualmente por WhatsApp; el precio está sujeto a confirmación.</p>
+                  )}
                   {/* AGREGAR MÁS PRODUCTOS */}
                   <button
                     type="button"
