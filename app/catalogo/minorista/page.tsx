@@ -375,7 +375,7 @@ export default function CatalogoMinorista() {
 
     setCantidades((actual) => ({
       ...actual,
-      [clave]: '0',
+      [clave]: '5',
     }))
 
     setCarritoAbierto(true)
@@ -384,7 +384,7 @@ export default function CatalogoMinorista() {
   function modificarMetros(clave: string, cambio: number) {
     setCarrito((actual) => ({
       ...actual,
-      [clave]: Math.max(0, (actual[clave] || 0) + cambio),
+      [clave]: Math.max(MINIMO_MINORISTA, (actual[clave] || 0) + cambio),
     }))
   }
 
@@ -606,7 +606,7 @@ export default function CatalogoMinorista() {
             (variante) => variante.id === selecciones[producto.id]
           ) || producto.variantes[0]
         const claveSeleccionada = crearClave(producto.id, varianteSeleccionada.id)
-        const cantidad = cantidades[claveSeleccionada] ?? '0'
+        const cantidad = cantidades[claveSeleccionada] ?? '5'
         const numero = Number(cantidad)
         const cantidadValida =
           cantidad !== '' && Number.isInteger(numero) && numero >= MINIMO_MINORISTA
@@ -730,7 +730,9 @@ export default function CatalogoMinorista() {
                 <div className="mt-7 border-t border-slate-200 pt-6">
                   <p className="text-xs text-slate-500">Precio por metro</p>
                   {producto.id === 'jersey-bondeado' && (
-                    <p className="mt-1 text-sm text-slate-400 line-through">$6.900 / metro</p>
+                    precioPreview !== null && precioPreview < 6900
+                      ? <p className="mt-1 text-sm text-slate-400 line-through">$6.900 / metro</p>
+                      : <p className="mt-1 text-sm text-slate-500">Sin descuento por pocas unidades</p>
                   )}
                   <p className="mt-1 text-3xl font-bold text-[#1e4d5c]">
                     {formatoPrecio(precioPreview)}
@@ -742,7 +744,7 @@ export default function CatalogoMinorista() {
                       <p>20 a 24 m: $5.900 · desde 25 m: $5.500</p>
                       <p>Se suman todos los colores de Jersey de tu carrito para obtener el descuento.</p>
                       {metrosPrevistos >= MINIMO_MINORISTA && (
-                        <p className="font-semibold text-emerald-700">Total con descuento: {formatoPrecio(subtotalPreview)}{precioPreview < 6900 ? ` · Ahorrás ${formatoPrecio((6900 - precioPreview) * numero)} en esta selección` : ''}</p>
+                        <p className="font-semibold text-emerald-700">{precioPreview < 6900 ? 'Total con descuento' : 'Total a pagar'}: {formatoPrecio(subtotalPreview)}{precioPreview < 6900 ? ` · Ahorrás ${formatoPrecio((6900 - precioPreview) * numero)} en esta selección` : ''}</p>
                       )}
                     </div>
                   )}
@@ -759,9 +761,9 @@ export default function CatalogoMinorista() {
                     id="metros-ventana-compra"
                     type="number"
                     min="5"
-                    step="1"
-                    placeholder="0"
-                    value={cantidad === '0' ? '' : cantidad}
+                    step="5"
+                    placeholder="5"
+                    value={cantidad}
                     onChange={(e) =>
                       setCantidades((actual) => ({
                         ...actual,
@@ -915,8 +917,9 @@ export default function CatalogoMinorista() {
                         <div className="flex items-center gap-3">
                           <button
                             type="button"
-                            onClick={() => modificarMetros(item.clave, -1)}
-                            aria-label="Restar un metro"
+                            onClick={() => modificarMetros(item.clave, -5)}
+                            disabled={item.metros <= MINIMO_MINORISTA}
+                            aria-label="Restar cinco metros"
                             className="rounded-lg border border-slate-300 p-2"
                           >
                             <Minus size={16} />
@@ -928,8 +931,8 @@ export default function CatalogoMinorista() {
 
                           <button
                             type="button"
-                            onClick={() => modificarMetros(item.clave, 1)}
-                            aria-label="Sumar un metro"
+                            onClick={() => modificarMetros(item.clave, 5)}
+                            aria-label="Sumar cinco metros"
                             className="rounded-lg border border-slate-300 p-2"
                           >
                             <Plus size={16} />
