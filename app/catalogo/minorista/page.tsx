@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft,
@@ -236,6 +237,7 @@ function crearClave(productoId: string, varianteId: string) {
 }
 
 export default function CatalogoMinorista() {
+  const router = useRouter()
   const [filtroActivo, setFiltroActivo] = useState('Todas las telas')
   const [cantidades, setCantidades] = useState<Record<string, string>>({})
   const [carrito, setCarrito] = useState<Record<string, number>>({})
@@ -393,6 +395,48 @@ export default function CatalogoMinorista() {
       ...actual,
       [clave]: 0,
     }))
+  }
+
+  // Guarda el carrito completo para recuperarlo en el catálogo mayorista.
+  // También incluye lo que el cliente está seleccionando en la ventana actual.
+  function irAlMayorista(productoPendiente?: Producto, variantePendiente?: Variante, metrosPendientes?: number) {
+    const lineas = itemsCarrito.map((item) => ({
+      productoId: item.producto.id,
+      nombre: item.producto.nombre,
+      varianteId: item.variante.id,
+      color: item.variante.color,
+      espesor: item.variante.espesor,
+      metros: item.metros,
+      imagen: item.variante.imagen,
+      muestra: item.variante.muestra,
+    }))
+
+    if (productoPendiente && variantePendiente && metrosPendientes && metrosPendientes >= MINIMO_MINORISTA) {
+      const existente = lineas.find((linea) =>
+        linea.productoId === productoPendiente.id && linea.varianteId === variantePendiente.id
+      )
+      if (existente) {
+        existente.metros += metrosPendientes
+      } else {
+        lineas.push({
+          productoId: productoPendiente.id,
+          nombre: productoPendiente.nombre,
+          varianteId: variantePendiente.id,
+          color: variantePendiente.color,
+          espesor: variantePendiente.espesor,
+          metros: metrosPendientes,
+          imagen: variantePendiente.imagen,
+          muestra: variantePendiente.muestra,
+        })
+      }
+    }
+
+    try {
+      window.sessionStorage.setItem('bontex-carrito-traspaso-mayorista', JSON.stringify(lineas))
+    } catch {
+      // El enlace sigue funcionando si el navegador bloquea el almacenamiento.
+    }
+    router.push('/catalogo/mayorista?desde=minorista')
   }
 
   function realizarPedido() {
@@ -778,7 +822,7 @@ export default function CatalogoMinorista() {
                 {metrosPrevistos >= LIMITE_MAYORISTA && (
                   <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
                     <p className="font-semibold">Estás comprando la cantidad mínima para poder acceder al precio mayorista.</p>
-                    <Link href="/catalogo/mayorista" className="mt-3 inline-flex rounded-lg bg-[#1e4d5c] px-4 py-3 font-semibold text-white hover:bg-[#286b7d]">Acceder al catálogo mayorista <ArrowLeft className="ml-2 rotate-180" size={16} /></Link>
+                    <button type="button" onClick={() => irAlMayorista(producto, varianteSeleccionada, numero)} className="mt-3 inline-flex rounded-lg bg-[#1e4d5c] px-4 py-3 font-semibold text-white hover:bg-[#286b7d]">Acceder al catálogo mayorista <ArrowLeft className="ml-2 rotate-180" size={16} /></button>
                   </div>
                 )}
                 <button
@@ -987,7 +1031,7 @@ export default function CatalogoMinorista() {
                 <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
                   <p className="font-semibold">Estás comprando la cantidad mínima para poder acceder al precio mayorista.</p>
                   <p className="mt-1 text-xs">{productosMayoristas.map(p => p.nombre).join(', ')}: 50 metros o más.</p>
-                  <Link href="/catalogo/mayorista" className="mt-3 inline-flex rounded-lg bg-[#1e4d5c] px-4 py-3 font-semibold text-white hover:bg-[#286b7d]">Acceder al catálogo mayorista <ArrowLeft className="ml-2 rotate-180" size={16} /></Link>
+                  <button type="button" onClick={() => irAlMayorista()} className="mt-3 inline-flex rounded-lg bg-[#1e4d5c] px-4 py-3 font-semibold text-white hover:bg-[#286b7d]">Acceder al catálogo mayorista <ArrowLeft className="ml-2 rotate-180" size={16} /></button>
                 </div>
               )}
               <p className="mt-3 text-xs text-slate-500">Total sujeto a confirmación comercial.</p>
