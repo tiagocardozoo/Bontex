@@ -217,6 +217,17 @@ const filtros = [
 
 const WHATSAPP = '5491173438981'
 
+const MINIMO_MINORISTA = 5
+const LIMITE_MAYORISTA = 50
+
+// Precio escalonado del Jersey: se calcula sobre todos los colores juntos.
+function precioJerseyPorMetro(metros: number) {
+  if (metros >= 25) return 5500
+  if (metros >= 20) return 5900
+  if (metros >= 10) return 6500
+  return 6900
+}
+
 const formatoPrecio = (valor: number | null) =>
   valor === null ? 'Precio a consultar' : '$' + valor.toLocaleString('es-AR')
 
@@ -277,12 +288,28 @@ export default function CatalogoMinorista() {
     0
   )
 
+  const metrosJersey = itemsCarrito
+    .filter((item) => item.producto.id === 'jersey-bondeado')
+    .reduce((total, item) => total + item.metros, 0)
+  const precioJersey = precioJerseyPorMetro(metrosJersey)
+
+  function precioFinalPorMetro(producto: Producto, variante: Variante) {
+    return producto.id === 'jersey-bondeado' ? precioJersey : variante.precio
+  }
+
   const tienePrecioAConsultar = itemsCarrito.some((item) => item.variante.precio === null)
   const totalPrecio = itemsCarrito.reduce(
-    (total, item) => total + (item.variante.precio ?? 0) * item.metros,
+    (total, item) => total + (precioFinalPorMetro(item.producto, item.variante) ?? 0) * item.metros,
     0
   )
   const resumenPrecio = tienePrecioAConsultar ? 'A confirmar' : formatoPrecio(totalPrecio)
+
+  const productosMayoristas = productos.filter((producto) =>
+    itemsCarrito
+      .filter((item) => item.producto.id === producto.id)
+      .reduce((total, item) => total + item.metros, 0) >= LIMITE_MAYORISTA
+  )
+  const ahorroJersey = metrosJersey * (6900 - precioJersey)
 
   function seleccionarEspesor(producto: Producto, espesor: string) {
     const varianteActual = producto.variantes.find(
@@ -339,7 +366,7 @@ export default function CatalogoMinorista() {
     const clave = crearClave(producto.id, varianteId)
     const cantidad = Number(cantidades[clave] ?? '0')
 
-    if (!Number.isInteger(cantidad) || cantidad <= 0) return
+    if (!Number.isInteger(cantidad) || cantidad < MINIMO_MINORISTA) return
 
     setCarrito((actual) => ({
       ...actual,
@@ -373,13 +400,14 @@ export default function CatalogoMinorista() {
 
     const detalle = itemsCarrito
       .map((item) => {
-        const subtotal = item.variante.precio === null ? null : item.variante.precio * item.metros
+        const precioUnitario = precioFinalPorMetro(item.producto, item.variante)
+        const subtotal = precioUnitario === null ? null : precioUnitario * item.metros
 
         return (
           `• ${item.metros} metros de ${item.producto.nombre}\n` +
           `  Espesor: ${item.variante.espesor}\n` +
           `  Color: ${item.variante.color}\n` +
-          `  Precio por metro: ${formatoPrecio(item.variante.precio)}\n` +
+          `  Precio por metro: ${formatoPrecio(precioUnitario)}\n` +
           `  Subtotal: ${formatoPrecio(subtotal)}`
         )
       })
@@ -393,6 +421,8 @@ export default function CatalogoMinorista() {
       totalMetros +
       '\nTotal del pedido: ' +
       resumenPrecio +
+      (ahorroJersey > 0 ? '\nAhorro Jersey por volumen: ' + formatoPrecio(ahorroJersey) : '') +
+      (productosMayoristas.length > 0 ? '\nCantidad mayorista alcanzada en: ' + productosMayoristas.map(p => p.nombre).join(', ') : '') +
       '\n\n¿Me confirman la disponibilidad de las telas seleccionadas?\n¡Gracias!'
 
     const url = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`
@@ -545,8 +575,11 @@ export default function CatalogoMinorista() {
                   <div className="mt-5 border-t border-slate-100 pt-5">
                     <p className="text-xs text-slate-500">Precio por metro</p>
                     <p className="mt-1 text-2xl font-bold text-[#1e4d5c]">
-                      {formatoPrecio(varianteSeleccionada.precio)}
+                      {producto.id === 'jersey-bondeado' ? 'Desde $5.500' : formatoPrecio(varianteSeleccionada.precio)}
                     </p>
+                    {producto.id === 'jersey-bondeado' && (
+                      <p className="mt-1 text-xs text-slate-500">De $6.900 a $5.500/m según cantidad. Mínimo 5 m.</p>
+                    )}
                   </div>
 
                   <button
@@ -576,7 +609,15 @@ export default function CatalogoMinorista() {
         const cantidad = cantidades[claveSeleccionada] ?? '0'
         const numero = Number(cantidad)
         const cantidadValida =
-          cantidad !== '' && Number.isInteger(numero) && numero > 0
+          cantidad !== '' && Number.isInteger(numero) && numero >= MINIMO_MINORISTA
+        const metrosDelProductoEnCarrito = itemsCarrito
+          .filter(item => item.producto.id === producto.id)
+          .reduce((total, item) => total + item.metros, 0)
+        const metrosPrevistos = metrosDelProductoEnCarrito + (Number.isInteger(numero) && numero > 0 ? numero : 0)
+        const precioPreview = producto.id === 'jersey-bondeado'
+          ? precioJerseyPorMetro(metrosPrevistos)
+          : varianteSeleccionada.precio
+        const subtotalPreview = precioPreview === null ? null : precioPreview * numero
         const espesoresUnicos = Array.from(
           new Set(producto.variantes.map((variante) => variante.espesor))
         )
@@ -688,9 +729,23 @@ export default function CatalogoMinorista() {
 
                 <div className="mt-7 border-t border-slate-200 pt-6">
                   <p className="text-xs text-slate-500">Precio por metro</p>
+                  {producto.id === 'jersey-bondeado' && (
+                    <p className="mt-1 text-sm text-slate-400 line-through">$6.900 / metro</p>
+                  )}
                   <p className="mt-1 text-3xl font-bold text-[#1e4d5c]">
-                    {formatoPrecio(varianteSeleccionada.precio)}
+                    {formatoPrecio(precioPreview)}
+                    <span className="ml-2 text-sm font-normal text-slate-500">/ metro</span>
                   </p>
+                  {producto.id === 'jersey-bondeado' && (
+                    <div className="mt-3 space-y-1 text-xs text-slate-600">
+                      <p>5 a 9 m: $6.900 · 10 a 19 m: $6.500</p>
+                      <p>20 a 24 m: $5.900 · desde 25 m: $5.500</p>
+                      <p>Se suman todos los colores de Jersey de tu carrito para obtener el descuento.</p>
+                      {metrosPrevistos >= MINIMO_MINORISTA && (
+                        <p className="font-semibold text-emerald-700">Total con descuento: {formatoPrecio(subtotalPreview)}{precioPreview < 6900 ? ` · Ahorrás ${formatoPrecio((6900 - precioPreview) * numero)} en esta selección` : ''}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-6 flex items-center justify-between gap-3">
@@ -703,7 +758,7 @@ export default function CatalogoMinorista() {
                   <input
                     id="metros-ventana-compra"
                     type="number"
-                    min="0"
+                    min="5"
                     step="1"
                     placeholder="0"
                     value={cantidad === '0' ? '' : cantidad}
@@ -717,6 +772,13 @@ export default function CatalogoMinorista() {
                   />
                 </div>
 
+                <p className="mt-2 text-xs text-slate-500">Mínimo de compra: 5 metros por selección.</p>
+                {metrosPrevistos >= LIMITE_MAYORISTA && (
+                  <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
+                    <p className="font-semibold">Estás comprando la cantidad mínima para poder acceder al precio mayorista.</p>
+                    <Link href="/catalogo/mayorista" className="mt-3 inline-flex rounded-lg bg-[#1e4d5c] px-4 py-3 font-semibold text-white hover:bg-[#286b7d]">Acceder al catálogo mayorista <ArrowLeft className="ml-2 rotate-180" size={16} /></Link>
+                  </div>
+                )}
                 <button
                   type="button"
                   disabled={!cantidadValida}
@@ -834,8 +896,8 @@ export default function CatalogoMinorista() {
                             {item.variante.espesor} · {item.variante.color}
                           </p>
 
-                          <p className="mt-1 text-sm text-slate-500">
-                            {formatoPrecio(item.variante.precio)} / metro
+                                  <p className="mt-1 text-sm text-slate-500">
+                            {formatoPrecio(precioFinalPorMetro(item.producto, item.variante))} / metro
                           </p>
                         </div>
 
@@ -876,7 +938,7 @@ export default function CatalogoMinorista() {
 
                         <strong className="text-[#1e4d5c]">
                           {formatoPrecio(
-                            item.variante.precio === null ? null : item.variante.precio * item.metros
+                                                         precioFinalPorMetro(item.producto, item.variante) === null ? null : precioFinalPorMetro(item.producto, item.variante)! * item.metros
                           )}
                         </strong>
                       </div>
@@ -915,9 +977,17 @@ export default function CatalogoMinorista() {
                 </strong>
               </div>
 
-              <p className="mt-3 text-xs text-slate-500">
-                Total sujeto a confirmación comercial.
-              </p>
+              {ahorroJersey > 0 && (
+                <p className="mt-3 font-semibold text-emerald-700">Ahorrás {formatoPrecio(ahorroJersey)} en Jersey respecto del precio de lista.</p>
+              )}
+              {productosMayoristas.length > 0 && (
+                <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
+                  <p className="font-semibold">Estás comprando la cantidad mínima para poder acceder al precio mayorista.</p>
+                  <p className="mt-1 text-xs">{productosMayoristas.map(p => p.nombre).join(', ')}: 50 metros o más.</p>
+                  <Link href="/catalogo/mayorista" className="mt-3 inline-flex rounded-lg bg-[#1e4d5c] px-4 py-3 font-semibold text-white hover:bg-[#286b7d]">Acceder al catálogo mayorista <ArrowLeft className="ml-2 rotate-180" size={16} /></Link>
+                </div>
+              )}
+              <p className="mt-3 text-xs text-slate-500">Total sujeto a confirmación comercial.</p>
 
               <button
                 type="button"
