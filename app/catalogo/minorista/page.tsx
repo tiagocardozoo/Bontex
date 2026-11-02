@@ -20,6 +20,7 @@ type Variante = {
   precio: number | null
   imagen: string
   muestra: string
+  densidad?: string
 }
 
 type Producto = {
@@ -147,18 +148,23 @@ const productos: Producto[] = [
     id: 'simil-neopreno',
     nombre: 'Símil neopreno',
     categoria: 'Símil neopreno',
-    descripcion: 'Estructura firme y excelente presencia visual.',
-    variantes: [
-      {
-        id: 'simil-neopreno-2-5-negro',
-        espesor: '2,5 mm',
-        color: 'Negro',
-        precio: 5800,
-        imagen:
-          'https://dummyimage.com/900x700/1F1F1F/FFFFFF&text=Simil+Neopreno+Negro',
-        muestra: '#1F1F1F',
-      },
-    ],
+    descripcion: 'Elegí la densidad, el espesor y el color de tu tela. Precios ilustrativos.',
+    variantes: (['Alta densidad', 'Baja densidad'] as const).flatMap((densidad) =>
+      ([{ espesor: '3 mm', precio: 1000 }, { espesor: '4 mm', precio: 2000 }, { espesor: '5 mm', precio: 3000 }]).flatMap(({ espesor, precio }) =>
+        [
+          { color: 'Blanco y Negro', muestra: '#f5f5f5' },
+          { color: 'Negro Ambas Caras', muestra: '#161616' },
+        ].map(({ color, muestra }) => ({
+          id: `neopreno-${densidad}-${espesor}-${color}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          densidad,
+          espesor,
+          color,
+          precio, // VALORES DE PRUEBA, REEMPLAZAR POR PRECIOS REALES
+          imagen: '',
+          muestra,
+        }))
+      )
+    ),
   },
   {
     id: 'velour-bondeado',
@@ -313,54 +319,15 @@ export default function CatalogoMinorista() {
   )
   const ahorroJersey = metrosJersey * (6900 - precioJersey)
 
-  function seleccionarEspesor(producto: Producto, espesor: string) {
-    const varianteActual = producto.variantes.find(
-      (variante) => variante.id === selecciones[producto.id]
-    )
-
-    const colorActual = varianteActual?.color
-
-    const nuevaVariante =
-      producto.variantes.find(
-        (variante) =>
-          variante.espesor === espesor &&
-          variante.color === colorActual
-      ) ||
-      producto.variantes.find(
-        (variante) => variante.espesor === espesor
-      )
-
-    if (!nuevaVariante) return
-
-    setSelecciones((actual) => ({
-      ...actual,
-      [producto.id]: nuevaVariante.id,
-    }))
-  }
-
-  function seleccionarColor(producto: Producto, color: string) {
-    const varianteActual = producto.variantes.find(
-      (variante) => variante.id === selecciones[producto.id]
-    )
-
-    const espesorActual = varianteActual?.espesor
-
-    const nuevaVariante =
-      producto.variantes.find(
-        (variante) =>
-          variante.color === color &&
-          variante.espesor === espesorActual
-      ) ||
-      producto.variantes.find(
-        (variante) => variante.color === color
-      )
-
-    if (!nuevaVariante) return
-
-    setSelecciones((actual) => ({
-      ...actual,
-      [producto.id]: nuevaVariante.id,
-    }))
+  function seleccionarOpcion(producto: Producto, campo: 'densidad' | 'espesor' | 'color', valor: string) {
+    const actual = producto.variantes.find(v => v.id === selecciones[producto.id]) || producto.variantes[0]
+    const encontrada = producto.variantes.find(v =>
+      v[campo] === valor &&
+      (campo === 'densidad' || v.densidad === actual.densidad) &&
+      (campo === 'espesor' || v.espesor === actual.espesor) &&
+      (campo === 'color' || v.color === actual.color)
+    ) || producto.variantes.find(v => v[campo] === valor)
+    if (encontrada) setSelecciones(prev => ({ ...prev, [producto.id]: encontrada.id }))
   }
 
   function agregarProducto(producto: Producto) {
@@ -450,6 +417,7 @@ export default function CatalogoMinorista() {
         return (
           `• ${item.metros} metros de ${item.producto.nombre}\n` +
           `  Espesor: ${item.variante.espesor}\n` +
+          (item.variante.densidad ? `  Densidad: ${item.variante.densidad}\n` : '') +
           `  Color: ${item.variante.color}\n` +
           `  Precio por metro: ${formatoPrecio(precioUnitario)}\n` +
           `  Subtotal: ${formatoPrecio(subtotal)}`
@@ -717,6 +685,23 @@ export default function CatalogoMinorista() {
                 </h2>
                 <p className="mt-3 text-sm text-slate-500">{producto.descripcion}</p>
 
+                {producto.id === 'simil-neopreno' && (
+                  <div className="mt-7 border-t border-slate-200 pt-6">
+                    <p className="text-sm font-semibold text-[#102b36]">Densidad: <span className="font-normal text-[#1e4d5c]">{varianteSeleccionada.densidad}</span></p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {['Alta densidad', 'Baja densidad'].map(densidad => (
+                        <button key={densidad} type="button"
+                          onClick={() => seleccionarOpcion(producto, 'densidad', densidad)}
+                          className={varianteSeleccionada.densidad === densidad
+                            ? 'rounded-lg border-2 border-[#1e4d5c] bg-[#e8f2f5] px-4 py-2.5 text-sm font-semibold text-[#1e4d5c]'
+                            : 'rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-600'}>
+                          {densidad}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="mt-7 border-t border-slate-200 pt-6">
                   <p className="text-sm font-semibold text-[#102b36]">Espesor</p>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -724,7 +709,7 @@ export default function CatalogoMinorista() {
                       <button
                         key={espesor}
                         type="button"
-                        onClick={() => seleccionarEspesor(producto, espesor)}
+                        onClick={() => seleccionarOpcion(producto, 'espesor', espesor)}
                         className={
                           varianteSeleccionada.espesor === espesor
                             ? 'rounded-lg bg-[#1e4d5c] px-5 py-2.5 text-sm font-semibold text-white'
@@ -752,20 +737,21 @@ export default function CatalogoMinorista() {
                         <button
                           key={color}
                           type="button"
-                          onClick={() => seleccionarColor(producto, color)}
+                          onClick={() => seleccionarOpcion(producto, 'color', color)}
                           aria-label={`Elegir color ${color}`}
                           aria-pressed={activo}
                           title={color}
                           className={
                             activo
-                              ? 'rounded-full border-2 border-[#1e4d5c] p-1.5'
-                              : 'rounded-full border-2 border-transparent p-1.5 hover:border-slate-300'
+                              ? producto.id === 'simil-neopreno' ? 'flex items-center rounded-xl border-2 border-[#1e4d5c] bg-[#e8f2f5] px-3 py-2 text-[#1e4d5c]' : 'rounded-full border-2 border-[#1e4d5c] p-1.5'
+                              : producto.id === 'simil-neopreno' ? 'flex items-center rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-slate-600' : 'rounded-full border-2 border-transparent p-1.5 hover:border-slate-300'
                           }
                         >
                           <span
                             className="block size-8 rounded-full border border-slate-300"
                             style={{ backgroundColor: varianteColor.muestra }}
                           />
+                          {producto.id === 'simil-neopreno' && <span className="ml-2 text-sm font-semibold">{color}</span>}
                         </button>
                       )
                     })}
@@ -943,7 +929,7 @@ export default function CatalogoMinorista() {
                           </h3>
 
                           <p className="mt-1 text-sm text-slate-500">
-                            {item.variante.espesor} · {item.variante.color}
+                            {item.variante.densidad ? `${item.variante.densidad} · ` : ''}{item.variante.espesor} · {item.variante.color}
                           </p>
 
                                   <p className="mt-1 text-sm text-slate-500">
