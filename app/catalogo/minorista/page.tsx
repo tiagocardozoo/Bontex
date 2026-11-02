@@ -682,9 +682,9 @@ export default function CatalogoMinorista() {
               role="dialog"
               aria-modal="true"
               aria-label={`Comprar ${producto.nombre}`}
-              className="relative z-10 grid max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-2xl bg-white shadow-2xl md:grid-cols-2"
+              className="relative z-10 grid h-[92dvh] w-full max-w-5xl grid-rows-[minmax(0,180px)_minmax(0,1fr)] overflow-hidden rounded-2xl bg-white shadow-2xl sm:grid-rows-[minmax(0,220px)_minmax(0,1fr)] md:grid-cols-2 md:grid-rows-1"
             >
-              <div className="relative min-h-56 bg-slate-200 sm:min-h-80 md:min-h-[530px]">
+              <div className="relative min-h-0 bg-slate-200">
                 {varianteSeleccionada.imagen ? (
                   <img
                     src={varianteSeleccionada.imagen}
@@ -698,16 +698,17 @@ export default function CatalogoMinorista() {
                 )}
               </div>
 
-              <div className="relative p-6 pt-14 sm:p-9 sm:pt-14">
+              <div className="relative flex min-h-0 flex-col">
                 <button
                   type="button"
                   onClick={() => setProductoSeleccionado(null)}
                   aria-label="Cerrar ventana"
-                  className="absolute right-5 top-4 rounded-full border border-slate-200 p-2 text-[#102b36] transition hover:bg-slate-100"
+                  className="absolute right-5 top-4 z-20 rounded-full border border-slate-200 bg-white p-2 text-[#102b36] transition hover:bg-slate-100"
                 >
                   <X size={22} />
                 </button>
 
+                <div className="min-h-0 flex-1 overflow-y-auto p-6 pt-14 pb-5 sm:p-9 sm:pt-14 sm:pb-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#39798a]">
                   {producto.categoria}
                 </p>
@@ -825,6 +826,8 @@ export default function CatalogoMinorista() {
                     <button type="button" onClick={() => irAlMayorista(producto, varianteSeleccionada, numero)} className="mt-3 inline-flex rounded-lg bg-[#1e4d5c] px-4 py-3 font-semibold text-white hover:bg-[#286b7d]">Acceder al catálogo mayorista <ArrowLeft className="ml-2 rotate-180" size={16} /></button>
                   </div>
                 )}
+                </div>
+                <div className="shrink-0 border-t border-slate-200 bg-white px-6 py-4 shadow-[0_-8px_20px_rgba(0,0,0,0.06)] sm:px-9">
                 <button
                   type="button"
                   disabled={!cantidadValida}
@@ -832,11 +835,12 @@ export default function CatalogoMinorista() {
                     agregarProducto(producto)
                     setProductoSeleccionado(null)
                   }}
-                  className="mt-7 flex w-full items-center justify-center gap-2 rounded-lg bg-[#1e4d5c] px-5 py-4 font-semibold text-white transition hover:bg-[#286b7d] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#1e4d5c] px-5 py-4 font-semibold text-white transition hover:bg-[#286b7d] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Plus size={19} />
                   Agregar al carrito
                 </button>
+                </div>
               </div>
             </div>
           </div>
