@@ -781,31 +781,6 @@ export default function CatalogoMinorista() {
                   )}
                 </div>
 
-                <div className="mt-6 flex items-center justify-between gap-3">
-                  <label
-                    htmlFor="metros-ventana-compra"
-                    className="text-sm font-semibold text-[#102b36]"
-                  >
-                    Metros
-                  </label>
-                  <input
-                    id="metros-ventana-compra"
-                    type="number"
-                    min="5"
-                    step="5"
-                    placeholder="5"
-                    value={cantidad}
-                    onChange={(e) =>
-                      setCantidades((actual) => ({
-                        ...actual,
-                        [claveSeleccionada]: e.target.value,
-                      }))
-                    }
-                    className="w-28 rounded-lg border border-slate-300 px-3 py-3 text-center text-[#102b36]"
-                  />
-                </div>
-
-                <p className="mt-2 text-xs text-slate-500">Mínimo de compra: 5 metros por selección.</p>
                 {metrosPrevistos >= LIMITE_MAYORISTA && (
                   <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
                     <p className="font-semibold">Estás comprando la cantidad mínima para poder acceder al precio mayorista.</p>
@@ -813,7 +788,31 @@ export default function CatalogoMinorista() {
                   </div>
                 )}
                 </div>
-                <div className="shrink-0 border-t border-slate-200 bg-white px-6 py-4 shadow-[0_-8px_20px_rgba(0,0,0,0.06)] sm:px-9">
+                <div className="shrink-0 border-t border-slate-200 bg-white px-6 py-3 shadow-[0_-8px_20px_rgba(0,0,0,0.06)] sm:px-9 sm:py-4">
+                  {/* METROS Y AGREGAR AL CARRITO SIEMPRE JUNTOS Y VISIBLES */}
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <div>
+                      <label htmlFor="metros-ventana-compra" className="block text-sm font-semibold text-[#102b36]">
+                        Metros a comprar
+                      </label>
+                      <p className="mt-1 text-xs text-slate-500">Mínimo 5 metros · aumenta de 5 en 5</p>
+                    </div>
+                    <input
+                      id="metros-ventana-compra"
+                      type="number"
+                      min="5"
+                      step="5"
+                      placeholder="5"
+                      value={cantidad}
+                      onChange={(e) =>
+                        setCantidades((actual) => ({
+                          ...actual,
+                          [claveSeleccionada]: e.target.value,
+                        }))
+                      }
+                      className="w-24 shrink-0 rounded-lg border border-slate-300 px-3 py-2.5 text-center text-[#102b36] sm:w-28"
+                    />
+                  </div>
                 <button
                   type="button"
                   disabled={!cantidadValida}
